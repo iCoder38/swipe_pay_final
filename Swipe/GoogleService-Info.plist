@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>360698983917-ti7p5vh9ue9haagc3idg7db5r98gh3jr.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.360698983917-ti7p5vh9ue9haagc3idg7db5r98gh3jr</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>360698983917-l8bk0feu9i861kgiqcc1n0dr9i9tlenc.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDA2Mtt_kGc56lW3clHKCHpkD1EcON3lVg</string>
+	<key>GCM_SENDER_ID</key>
+	<string>360698983917</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.evs.swiipe2</string>
+	<key>PROJECT_ID</key>
+	<string>swiipe-a35b8</string>
+	<key>STORAGE_BUCKET</key>
+	<string>swiipe-a35b8.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:360698983917:ios:5c7fd230c838c46d8723e4</string>
+	<key>DATABASE_URL</key>
+	<string>https://swiipe-a35b8.firebaseio.com</string>
+</dict>
+</plist>
