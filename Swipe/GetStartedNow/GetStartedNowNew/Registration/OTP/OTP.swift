@@ -1,548 +1,201 @@
-//
-//  OTP.swift
-//  Swipe
-//
-//  Created by evs_SSD on 2/24/20.
-//  Copyright © 2020 Apple . All rights reserved.
-//
-
 import UIKit
-import SROTPView
 import Alamofire
 import CRNotifications
 
-class OTP: UIViewController {
+class OTP: UIViewController, UITextFieldDelegate {
 
-    @IBOutlet weak var otpView: SROTPView! //dont use SROTPField use SROTPView
-    
+    var getNumber: String!
+    var getEmail: String!
+    var otpFields: [UITextField] = []
+
+    @IBOutlet weak var lblTitle: UILabel!
+    @IBOutlet weak var lblSubtitle: UILabel!
     @IBOutlet weak var btnResend: UIButton!
-    
-    var enteredOtp: String = ""
-    
-    var whatIsLoginId:String!
-    
-    @IBOutlet weak var imgBG:UIImageView!
-    
-    @IBOutlet weak var lblOtpSentTo:UILabel!
-    
-    var getNumber:String!
-    
+    @IBOutlet weak var topBlueView: UIView!   // The curve background
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // print(whatIsLoginId as Any)
 
-        btnResend.addTarget(self, action: #selector(resendClickMethod), for: .touchUpInside)
-        
-        
-        lblOtpSentTo.text = "We sent a code to "+getNumber+" Please write down."
-        
-        
-        let defaults = UserDefaults.standard
-        let userName = defaults.string(forKey: "KeyLoginPersonal")
-        if userName == "loginViaPersonal" {
-            ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Please wait...")
-            
-            imgBG.image = UIImage(named:"PloginBG")
-            if let person = UserDefaults.standard.value(forKey: "keyLoginFullData") as? [String:Any] {
-                let x : Int = (person["userId"] as! Int)
-                let myString = String(x)
-                self.otpVerification(strLoginUserIdIs: myString)
-                
+        setupStaticUI()
+        createOTPBoxes()
+        generateOTP()
+    }
+
+    // MARK: - SETUP STATIC UI (Title, Subtitle)
+    // MARK: - SETUP STATIC UI (Title, Subtitle)
+    func setupStaticUI() {
+        lblTitle.text = "Confirmation Code"
+
+        var email = ""
+        if let person = UserDefaults.standard.value(forKey: "keyLoginFullData") as? [String: Any] {
+            email = person["email"] as? String ?? ""
+        }
+
+        lblSubtitle.text = "We sent a code to \(getNumber ?? "") (\(getEmail ?? "")). Please write down."
+    }
+
+
+    // MARK: - CREATE 4 OTP BOXES PROGRAMMATICALLY
+    func createOTPBoxes() {
+
+        let container = UIView()
+        container.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(container)
+
+        NSLayoutConstraint.activate([
+            container.topAnchor.constraint(equalTo: lblSubtitle.bottomAnchor, constant: 35),
+            container.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            container.heightAnchor.constraint(equalToConstant: 60)
+        ])
+
+        var boxes: [UITextField] = []
+        let gap: CGFloat = 15
+
+        var previous: UITextField?
+
+        for i in 0..<4 {
+
+            let tf = UITextField()
+            tf.translatesAutoresizingMaskIntoConstraints = false
+            tf.tag = i
+            tf.delegate = self
+            tf.keyboardType = .numberPad
+            tf.textAlignment = .center
+            tf.textColor = .white
+            tf.font = .boldSystemFont(ofSize: 24)
+
+            tf.layer.cornerRadius = 12
+            tf.layer.borderWidth = 2
+            tf.layer.borderColor = UIColor.white.cgColor
+            tf.backgroundColor = .clear
+
+            container.addSubview(tf)
+            otpFields.append(tf)
+
+            NSLayoutConstraint.activate([
+                tf.widthAnchor.constraint(equalToConstant: 60),
+                tf.heightAnchor.constraint(equalToConstant: 60),
+                tf.topAnchor.constraint(equalTo: container.topAnchor)
+            ])
+
+            if let prev = previous {
+                tf.leadingAnchor.constraint(equalTo: prev.trailingAnchor, constant: gap).isActive = true
+            } else {
+                tf.leadingAnchor.constraint(equalTo: container.leadingAnchor).isActive = true
+            }
+
+            previous = tf
+
+            if i == 3 {
+                container.trailingAnchor.constraint(equalTo: tf.trailingAnchor).isActive = true
             }
         }
-        else {
-            ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Please wait...")
-            imgBG.image = UIImage(named:"bLoginBG")
-            if let person = UserDefaults.standard.value(forKey: "keyLoginFullData") as? [String:Any] {
-                let x : Int = (person["userId"] as! Int)
-                let myString = String(x)
-                self.otpVerification(strLoginUserIdIs: myString)
-                
+
+        otpFields.first?.becomeFirstResponder()
+    }
+
+    // MARK: - OTP TYPING HANDLER
+    func textField(_ textField: UITextField,
+                   shouldChangeCharactersIn range: NSRange,
+                   replacementString string: String) -> Bool {
+
+        // Typing
+        if string.count == 1 {
+            textField.text = string
+
+            if textField.tag < 3 {
+                otpFields[textField.tag + 1].becomeFirstResponder()
+            } else {
+                textField.resignFirstResponder()
+                let otp = otpFields.map { $0.text ?? "" }.joined()
+                checkMyOtpIs(strMyOtpIsHere: otp)
             }
-        }
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        otpView.otpTextFieldsCount = 4
-        otpView.otpTextFieldActiveBorderColor = UIColor.white
-        otpView.otpTextFieldDefaultBorderColor = UIColor.white
-        otpView.otpTextFieldFontColor = UIColor.white
-//        otpView.cursorColor = UIColor.white
-//        otpView.otpTextFieldBorderWidth = 2
-        otpView.otpEnteredString = { pin in
-            print("The entered pin is \(pin)")
-            
-            self.checkMyOtpIs(strMyOtpIsHere: "\(pin)")
-        }
-    }
-    
-    override func viewDidLayoutSubviews() {
-         otpView.initializeUI()
-    }
 
-    @objc func resendClickMethod() {
-        // ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Please wait...")
-        
-        let defaults = UserDefaults.standard
-        let userName = defaults.string(forKey: "KeyLoginPersonal")
-        if userName == "loginViaPersonal" {
-            ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Please wait...")
+            return false
         }
-        else {
-            ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Please wait...")
-        }
-        
-        
-        let urlString = BASE_URL_SWIIPE
-        
-        var parameters:Dictionary<AnyHashable, Any>!
-        
-        if let person = UserDefaults.standard.value(forKey: "keyLoginFullData") as? [String:Any] {
-            let x : Int = (person["userId"] as! Int)
-            let myString = String(x)
-            
-            ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Please wait...")
-            parameters = [
-                "action"        : "generateotp",
-                "userId"        : String(myString)
-            ]
-        }
-        print("parameters-------\(String(describing: parameters))")
-        
-        Alamofire.request(urlString, method: .post, parameters: parameters as? Parameters).responseJSON
-        {
-            response in
-            
-            switch(response.result) {
-            case .success(_):
-                if let data = response.result.value {
-                    
-                    
-                    let JSON = data as! NSDictionary
-                    print(JSON)
-                    
-                    
-                    var strSuccess : String!
-                    strSuccess = JSON["status"]as Any as? String
-                    
-                    var strSuccessAlert : String!
-                    strSuccessAlert = JSON["msg"]as Any as? String
-                    
-                    if strSuccess == "success" //true
-                    {
-                        
-                        ERProgressHud.sharedInstance.hide()
-                        
-                        // var dict: Dictionary<AnyHashable, Any>
-                        // dict = JSON["data"] as! Dictionary<AnyHashable, Any>
-                        
-                        // let defaults = UserDefaults.standard
-                        // defaults.setValue(dict, forKey: "keyLoginFullData")
-                        
-                        CRNotifications.showNotification(type: CRNotifications.success, title: "Message!", message:strSuccessAlert, dismissDelay: 1.5, completion:{})
-                        
-                        
-                        // var strSuccess2 : String!
-                        // strSuccess2 = dict["role"] as Any as? String
-                        
-                        // print(strSuccess2 as Any)
-                        
-                        // self.dismiss(animated: true, completion: nil)
-                        
-                    }
-                    else
-                    {
-                        // self.indicator.stopAnimating()
-                        // self.enableService()
-                        CRNotifications.showNotification(type: CRNotifications.error, title: "Error!", message:strSuccessAlert, dismissDelay: 1.5, completion:{})
-                        ERProgressHud.sharedInstance.hide()
-                    }
-                    
-                }
-                
-            case .failure(_):
-                print("Error message:\(String(describing: response.result.error))")
-                // self.indicator.stopAnimating()
-                // self.enableService()
-                ERProgressHud.sharedInstance.hide()
-                
-                let alertController = UIAlertController(title: nil, message: SERVER_ISSUE_MESSAGE_ONE+"\n"+SERVER_ISSUE_MESSAGE_TWO, preferredStyle: .actionSheet)
-                
-                let okAction = UIAlertAction(title: "OK", style: UIAlertAction.Style.default) {
-                    UIAlertAction in
-                    NSLog("OK Pressed")
-                }
-                
-                alertController.addAction(okAction)
-                
-                self.present(alertController, animated: true, completion: nil)
-                
-                break
+
+        // Backspace
+        if string.count == 0 {
+            textField.text = ""
+            if textField.tag > 0 {
+                otpFields[textField.tag - 1].becomeFirstResponder()
             }
+            return false
         }
-    }
-    
-    // MARK:- SEND OTP
-    @objc func otpVerification(strLoginUserIdIs:String!) {
-        // ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Please wait...")
-        
-        let defaults = UserDefaults.standard
-        let userName = defaults.string(forKey: "KeyLoginPersonal")
-        if userName == "loginViaPersonal" {
-             ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Please wait...")
-        }
-        else {
-             ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Please wait...")
-        }
-        
-        let urlString = BASE_URL_SWIIPE
-                 
-                 var parameters:Dictionary<AnyHashable, Any>!
-                 
-                     ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Please wait...")
-                     parameters = [
-                         "action"        : "generateotp",
-                         "userId"        : String(strLoginUserIdIs)
-                        
-                     ]
-                 
-                 
-                 
-                            print("parameters-------\(String(describing: parameters))")
-                            
-                            Alamofire.request(urlString, method: .post, parameters: parameters as? Parameters).responseJSON
-                                {
-                                    response in
-                        
-                                    switch(response.result) {
-                                    case .success(_):
-                                       if let data = response.result.value {
 
-                                        
-                                        let JSON = data as! NSDictionary
-                                           print(JSON)
-                                        
-                                        /*
-                                         data =     {
-                                             BEmail = "";
-                                             BLat = "";
-                                             BName = "";
-                                             BPhone = "";
-                                             BType = "";
-                                             Baddress = "";
-                                             Blong = "";
-                                             address = "";
-                                             contactNumber = 1234;
-                                             device = Ios;
-                                             deviceToken = "";
-                                             email = "hello123@gmail.com";
-                                             firebaseId = "";
-                                             fullName = hello;
-                                             image = "";
-                                             lastName = "";
-                                             role = Vendor;
-                                             socialId = "";
-                                             socialType = "";
-                                             userId = 99;
-                                             wallet = 0;
-                                             zipCode = "";
-                                         };
-                                         msg = "Data save successfully.";
-                                         status = success;
-                                         */
-                                        var strSuccess : String!
-                                        strSuccess = JSON["status"]as Any as? String
-                                        
-                                        var strSuccessAlert : String!
-                                        strSuccessAlert = JSON["msg"]as Any as? String
-                                        
-                                        if strSuccess == "success" //true
-                                        {
-                                      
-                                            ERProgressHud.sharedInstance.hide()
-                                            
-                                            // var dict: Dictionary<AnyHashable, Any>
-                                            // dict = JSON["data"] as! Dictionary<AnyHashable, Any>
-                                            
-                                            // let defaults = UserDefaults.standard
-                                            // defaults.setValue(dict, forKey: "keyLoginFullData")
-                                            
-                                          CRNotifications.showNotification(type: CRNotifications.success, title: "Message!", message:strSuccessAlert, dismissDelay: 1.5, completion:{})
-                                         
-                                         
-                                         // var strSuccess2 : String!
-                                         // strSuccess2 = dict["role"] as Any as? String
-                                         
-                                          // print(strSuccess2 as Any)
-                                         
-                                            // self.dismiss(animated: true, completion: nil)
-                                             
-                                             self.dummyLogin()
-                                            
-                                            
-                                            //
-                                        }
-                                        else
-                                        {
-                                            // self.indicator.stopAnimating()
-                                            // self.enableService()
-                                         CRNotifications.showNotification(type: CRNotifications.error, title: "Error!", message:strSuccessAlert, dismissDelay: 1.5, completion:{})
-                                            ERProgressHud.sharedInstance.hide()
-                                        }
-                                        
-                                    }
-
-                                    case .failure(_):
-                                        print("Error message:\(String(describing: response.result.error))")
-                                        // self.indicator.stopAnimating()
-                                        // self.enableService()
-                                        ERProgressHud.sharedInstance.hide()
-                                        
-                                        let alertController = UIAlertController(title: nil, message: SERVER_ISSUE_MESSAGE_ONE+"\n"+SERVER_ISSUE_MESSAGE_TWO, preferredStyle: .actionSheet)
-                                        
-                                        let okAction = UIAlertAction(title: "OK", style: UIAlertAction.Style.default) {
-                                                UIAlertAction in
-                                                NSLog("OK Pressed")
-                                            }
-                                        
-                                        alertController.addAction(okAction)
-                                        
-                                        self.present(alertController, animated: true, completion: nil)
-                                        
-                                        break
-                                     }
-                                }
+        return true
     }
-    
-    
-    
-    
-    @objc func dummyLogin() {
-        
-        
-        self.view.endEditing(true)
-        
-        let urlString = BASE_URL_SWIIPE
-        
-        var parameters:Dictionary<AnyHashable, Any>!
-        
+
+    // MARK: - RESEND
+    @IBAction func resendTapped(_ sender: Any) {
+        generateOTP()
+    }
+
+    func generateOTP() {
+        guard let person = UserDefaults.standard.value(forKey: "keyLoginFullData") as? [String:Any] else { return }
+        let userId = String(person["userId"] as! Int)
+
         ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Please wait...")
-        parameters = [
-            "action"        : "login",
-            //
-            
-            "email"         : String("dishu5@gmail.com"),
-            "password"      : String("123456")
+
+        let params: Parameters = [
+            "action": "generateotp",
+            "userId": userId
         ]
-        
-        print("parameters-------\(String(describing: parameters))")
-        
-        Alamofire.request(urlString, method: .post, parameters: parameters as? Parameters).responseJSON
-        {
-            response in
-            
-            switch(response.result) {
-            case .success(_):
-                if let data = response.result.value {
-                    
-                    
-                    let JSON = data as! NSDictionary
-                    print(JSON)
-                    
-                    var strSuccess : String!
-                    strSuccess = JSON["status"]as Any as? String
-                    
-                    var strSuccessAlert : String!
-                    strSuccessAlert = JSON["msg"]as Any as? String
-                    
-                    if strSuccess == "success" {
-                       
-                    }
-                    else {
-                        // self.indicator.stopAnimating()
-                        // self.enableService()
-                        CRNotifications.showNotification(type: CRNotifications.error, title: "Error!", message:strSuccessAlert, dismissDelay: 1.5, completion:{})
-                        ERProgressHud.sharedInstance.hide()
-                    }
-                    
+
+        Alamofire.request(BASE_URL_SWIIPE, method: .post, parameters: params).responseJSON { resp in
+
+            ERProgressHud.sharedInstance.hide()
+
+            if let json = resp.value as? [String:Any] {
+                if json["status"] as? String == "success" {
+                    CRNotifications.showNotification(type: CRNotifications.success, title: "Message!", message: json["msg"] as! String, dismissDelay: 1.5, completion: {})
+                } else {
+                    CRNotifications.showNotification(type: CRNotifications.error, title: "Error!", message: json["msg"] as! String, dismissDelay: 1.5, completion: {})
                 }
-                
-            case .failure(_):
-                print("Error message:\(String(describing: response.result.error))")
-                // self.indicator.stopAnimating()
-                // self.enableService()
-                ERProgressHud.sharedInstance.hide()
-                
-                let alertController = UIAlertController(title: nil, message: SERVER_ISSUE_MESSAGE_ONE+"\n"+SERVER_ISSUE_MESSAGE_TWO, preferredStyle: .actionSheet)
-                
-                let okAction = UIAlertAction(title: "OK", style: UIAlertAction.Style.default) {
-                    UIAlertAction in
-                    NSLog("OK Pressed")
-                }
-                
-                alertController.addAction(okAction)
-                
-                self.present(alertController, animated: true, completion: nil)
-                
-                break
             }
         }
-        
     }
-    
-    
-    
-    @objc func checkMyOtpIs(strMyOtpIsHere:String) {
-        // ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Please wait...")
-        
-        let defaults = UserDefaults.standard
-        let userName = defaults.string(forKey: "KeyLoginPersonal")
-        if userName == "loginViaPersonal" {
-             ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Please wait...")
-        }
-        else {
-             ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Please wait...")
-        }
-        
-        
-        let urlString = BASE_URL_SWIIPE
-              
-        var parameters:Dictionary<AnyHashable, Any>!
-        
-        if let person = UserDefaults.standard.value(forKey: "keyLoginFullData") as? [String:Any] {
-            let x : Int = (person["userId"] as! Int)
-            let myString = String(x)
-            // self.otpVerification(strLoginUserIdIs: myString)
-            
-        
-        
-                 
-                 
-                     ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Please wait...")
-                     parameters = [
-                         "action"        : "verifyotp",
-                         "userId"        : String(myString),
-                         "OTP"        : String(strMyOtpIsHere)
-                        
-                     ]
-                 
-        }
-                 
-                            print("parameters-------\(String(describing: parameters))")
-                            
-                            Alamofire.request(urlString, method: .post, parameters: parameters as? Parameters).responseJSON
-                                {
-                                    response in
-                        
-                                    switch(response.result) {
-                                    case .success(_):
-                                       if let data = response.result.value {
 
-                                        
-                                        let JSON = data as! NSDictionary
-                                           print(JSON)
-                                        
-                                        
-                                        var strSuccess : String!
-                                        strSuccess = JSON["status"]as Any as? String
-                                        
-                                        var strSuccessAlert : String!
-                                        strSuccessAlert = JSON["msg"]as Any as? String
-                                        
-                                        if strSuccess == "success" //true
-                                        {
-                                      
-                                            ERProgressHud.sharedInstance.hide()
-                                            
-                                            // var dict: Dictionary<AnyHashable, Any>
-                                            // dict = JSON["data"] as! Dictionary<AnyHashable, Any>
-                                            
-                                            // let defaults = UserDefaults.standard
-                                            // defaults.setValue(dict, forKey: "keyLoginFullData")
-                                            
-                                          CRNotifications.showNotification(type: CRNotifications.success, title: "Message!", message:strSuccessAlert, dismissDelay: 1.5, completion:{})
-                                         
-                                         
-                                         // var strSuccess2 : String!
-                                         // strSuccess2 = dict["role"] as Any as? String
-                                         
-                                          // print(strSuccess2 as Any)
-                                         
-                                            // self.dismiss(animated: true, completion: nil)
-                                     
-                                            
-                                            
-                                            
-                                            
-                                            
-                                            
-                                            let defaults = UserDefaults.standard
-                                            let userName = defaults.string(forKey: "KeyLoginPersonal")
-                                            if userName == "loginViaPersonal" {
-                                                // ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Please wait...")
-                                                
-                                                self.view.window!.rootViewController?.dismiss(animated: false, completion: nil)
-                                                
-                                            }
-                                            else {
-                                                // ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Please wait...")
-                                                // self.view.window!.rootViewController?.dismiss(animated: false, completion: nil)
-                                                
-                                                
-                                                
-        let settingsVCId = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "FinalRegistraitonId") as? FinalRegistraiton
-        self.present(settingsVCId!, animated: true, completion: nil)
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-        //self.navigationController?.pushViewController(settingsVCId!, animated: true)
-                                                
-                                            }
-                                            
-                                            
-                                            
-                                            
-                                            
-                                            
-                                            
-                                            
-                                            
-                                        }
-                                        else
-                                        {
-                                            // self.indicator.stopAnimating()
-                                            // self.enableService()
-                                         CRNotifications.showNotification(type: CRNotifications.error, title: "Error!", message:strSuccessAlert, dismissDelay: 1.5, completion:{})
-                                            ERProgressHud.sharedInstance.hide()
-                                        }
-                                        
-                                    }
+    // MARK: - VERIFY OTP
+    func checkMyOtpIs(strMyOtpIsHere: String) {
 
-                                    case .failure(_):
-                                        print("Error message:\(String(describing: response.result.error))")
-                                        // self.indicator.stopAnimating()
-                                        // self.enableService()
-                                        ERProgressHud.sharedInstance.hide()
-                                        
-                                        let alertController = UIAlertController(title: nil, message: SERVER_ISSUE_MESSAGE_ONE+"\n"+SERVER_ISSUE_MESSAGE_TWO, preferredStyle: .actionSheet)
-                                        
-                                        let okAction = UIAlertAction(title: "OK", style: UIAlertAction.Style.default) {
-                                                UIAlertAction in
-                                                NSLog("OK Pressed")
-                                            }
-                                        
-                                        alertController.addAction(okAction)
-                                        
-                                        self.present(alertController, animated: true, completion: nil)
-                                        
-                                        break
-                                     }
-                                }
+        guard let person = UserDefaults.standard.value(forKey: "keyLoginFullData") as? [String:Any] else { return }
+        let userId = String(person["userId"] as! Int)
+
+        ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Please wait...")
+
+        let params: Parameters = [
+            "action": "verifyotp",
+            "userId": userId,
+            "OTP": strMyOtpIsHere
+        ]
+
+        Alamofire.request(BASE_URL_SWIIPE, method: .post, parameters: params).responseJSON { resp in
+
+            ERProgressHud.sharedInstance.hide()
+
+            if let json = resp.value as? [String:Any] {
+
+                if json["status"] as? String == "success" {
+
+                    CRNotifications.showNotification(type: CRNotifications.success, title: "Success", message: json["msg"] as! String, dismissDelay: 1.5, completion: {})
+
+                    let defaults = UserDefaults.standard
+                    let loginType = defaults.string(forKey: "KeyLoginPersonal")
+
+                    if loginType == "loginViaPersonal" {
+                        self.view.window?.rootViewController?.dismiss(animated: true)
+                    } else {
+                        let nextVC = UIStoryboard(name: "Main", bundle: .main)
+                            .instantiateViewController(withIdentifier: "FinalRegistraitonId")
+                        self.present(nextVC, animated: true)
+                    }
+
+                } else {
+                    CRNotifications.showNotification(type: CRNotifications.error, title: "Error", message: json["msg"] as! String, dismissDelay: 1.5, completion: {})
+                }
+            }
+        }
     }
 }
+

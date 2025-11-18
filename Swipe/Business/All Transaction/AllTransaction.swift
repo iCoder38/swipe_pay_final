@@ -317,52 +317,19 @@ extension AllTransaction: UITableViewDataSource
             // image
              cell.imgProfilePicture.sd_setImage(with: URL(string: (item!["senderImage"] as! String)), placeholderImage: UIImage(named: "avatar"))
             
-            
-            
-            
-            
-            /*
-            let string = "My Wallet"//(item!["nameOnCard"] as! String)
-            let first4 = string.prefix(1)
-            let value = String(first4.uppercased())
-            cell.lblMyFirstLetterIs.text = value
-            cell.lblMyFirstLetterIs.backgroundColor = .clear
-            cell.lblMyFirstLetterIs.layer.cornerRadius = 30
-            cell.lblMyFirstLetterIs.clipsToBounds = true
-            cell.lblMyFirstLetterIs.textAlignment = .center
-            cell.lblMyFirstLetterIs.backgroundColor = .systemTeal
-            */
             cell.imgProfilePicture.backgroundColor = .clear
             
             
             
-        }
-        else if (item!["type"] as! String) == "SEND" {
+        } else if (item!["type"] as! String) == "SEND" {
             cell.lblAmount.text = "- $ "+((item?["amount"] as? String)!)
             cell.lblAmount.textColor = .systemRed
             
             // bank name
             cell.lblBankName.text = (item!["receiverName"] as! String)
             
-            // my image
             // image
              cell.imgProfilePicture.sd_setImage(with: URL(string: (item!["receiverImage"] as! String)), placeholderImage: UIImage(named: "avatar"))
-            
-            
-            
-            
-            /*
-            let string = (item!["receiverName"] as! String)
-            let first4 = string.prefix(1)
-            let value = String(first4.uppercased())
-            cell.lblMyFirstLetterIs.text = value
-            cell.lblMyFirstLetterIs.backgroundColor = .clear
-            cell.lblMyFirstLetterIs.layer.cornerRadius = 30
-            cell.lblMyFirstLetterIs.clipsToBounds = true
-            cell.lblMyFirstLetterIs.textAlignment = .center
-            cell.lblMyFirstLetterIs.backgroundColor = .systemTeal
-            */
-            
             
             cell.imgProfilePicture.backgroundColor = .clear
             
@@ -375,127 +342,25 @@ extension AllTransaction: UITableViewDataSource
             cell.lblBankName.text = ((item?["nameOnCard"] as? String)!)
             // cell.lblBankName.textColor = .systemTeal
             
-            // my image
             // image
              cell.imgProfilePicture.sd_setImage(with: URL(string: (item!["senderImage"] as! String)), placeholderImage: UIImage(named: "avatar"))
             
-            
-            
-            
-            
-            /*
-            let string = "Cashout"//(item!["nameOnCard"] as! String)
-            let first4 = string.prefix(1)
-            let value = String(first4.uppercased())
-            cell.lblMyFirstLetterIs.text = value
-            cell.lblMyFirstLetterIs.backgroundColor = .clear
-            cell.lblMyFirstLetterIs.layer.cornerRadius = 30
-            cell.lblMyFirstLetterIs.clipsToBounds = true
-            cell.lblMyFirstLetterIs.textAlignment = .center
-            cell.lblMyFirstLetterIs.backgroundColor = .systemTeal
-            */
-            
             cell.imgProfilePicture.backgroundColor = .clear
-        }
-        
-        
-       // } //
-        
-        /*
-       else
-       {
-           let stringValue = String(livingArea)
-           // cell.lblAmount.text = "$ "+stringValue
-        
-        if (item!["type"] as! String) == "ADD" {
-            cell.lblAmount.text = "+ $ "+stringValue
-            cell.lblAmount.textColor = .systemGreen
+        } else if (item!["type"] as! String) == "CASHOUT" {
+            
+            cell.lblAmount.text = "+ $ "+((item?["amount"] as? String)!)
+            cell.lblAmount.textColor = .systemTeal
             
             // bank name
-            cell.lblBankName.text = "My Wallet" //(item!["receiverName"] as! String)
+            cell.lblBankName.text = ((item?["type"] as? String)!)
+            // cell.lblBankName.textColor = .systemTeal
             
-            // my image
-            // image
-            cell.imgProfilePicture.sd_setImage(with: URL(string: (item!["senderImage"] as! String)), placeholderImage: UIImage(named: "avatar"))
-            
-            /*
-            let string = "My Wallet"//(item!["nameOnCard"] as! String)
-            let first4 = string.prefix(1)
-            let value = String(first4.uppercased())
-            cell.lblMyFirstLetterIs.text = value
-            cell.lblMyFirstLetterIs.backgroundColor = .clear
-            cell.lblMyFirstLetterIs.layer.cornerRadius = 30
-            cell.lblMyFirstLetterIs.clipsToBounds = true
-            cell.lblMyFirstLetterIs.textAlignment = .center
-            cell.lblMyFirstLetterIs.backgroundColor = .systemTeal
-            */
-            
-            cell.imgProfilePicture.backgroundColor = .clear
-        }
-        else if (item!["type"] as! String) == "SEND" {
-            cell.lblAmount.text = "- $ "+stringValue
-            cell.lblAmount.textColor = .systemRed
-            
-            // bank name
-            cell.lblBankName.text = (item!["receiverName"] as! String)
-            
-            // my image
-            // image
-             cell.imgProfilePicture.sd_setImage(with: URL(string: (item!["receiverImage"] as! String)), placeholderImage: UIImage(named: "avatar"))
-            
-            
-            
-            /*
-            let string = (item!["receiverName"] as! String)
-            let first4 = string.prefix(1)
-            let value = String(first4.uppercased())
-            cell.lblMyFirstLetterIs.text = value
-            cell.lblMyFirstLetterIs.backgroundColor = .clear
-            cell.lblMyFirstLetterIs.layer.cornerRadius = 30
-            cell.lblMyFirstLetterIs.clipsToBounds = true
-            cell.lblMyFirstLetterIs.textAlignment = .center
-            cell.lblMyFirstLetterIs.backgroundColor = .systemTeal
-            */
-            
-            
-            cell.imgProfilePicture.backgroundColor = .clear
-            
-            
-            
-            
-            
-        }
-        else {
-            cell.lblAmount.text = "- $ "+stringValue
-            cell.lblAmount.textColor = .systemRed
-            
-            // bank name
-            cell.lblBankName.text = "Cashout" //(item!["receiverName"] as! String)
-            
-            // my image
             // image
              cell.imgProfilePicture.sd_setImage(with: URL(string: (item!["senderImage"] as! String)), placeholderImage: UIImage(named: "avatar"))
             
-            
-            
-            
-            
-            /*
-            let string = "Cashout"//(item!["nameOnCard"] as! String)
-            let first4 = string.prefix(1)
-            let value = String(first4.uppercased())
-            cell.lblMyFirstLetterIs.text = value
-            cell.lblMyFirstLetterIs.backgroundColor = .clear
-            cell.lblMyFirstLetterIs.layer.cornerRadius = 30
-            cell.lblMyFirstLetterIs.clipsToBounds = true
-            cell.lblMyFirstLetterIs.textAlignment = .center
-            cell.lblMyFirstLetterIs.backgroundColor = .systemTeal
-            */
-            
             cell.imgProfilePicture.backgroundColor = .clear
         }
-       } // last
- */
+        
         cell.imgProfilePicture.backgroundColor = .clear
         
         return cell

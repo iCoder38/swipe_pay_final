@@ -263,6 +263,7 @@ class SendMoney: UIViewController, MFMessageComposeViewControllerDelegate,UITabl
                 self.usersListWB(pageNumber: 1)
             }
             else {
+                self.arr_list_of_all_users.removeAllObjects()
                 self.searchUsersListWB(strSearchKeyWord: textField!.text!)
             }
             
@@ -471,53 +472,16 @@ class SendMoney: UIViewController, MFMessageComposeViewControllerDelegate,UITabl
                         self.searchArrayStr = "1"
                         // let defaults = UserDefaults.standard
                         
+                        
                         var ar : NSArray!
                         ar = (JSON["data"] as! Array<Any>) as NSArray
                         // self.arrListOfUsers = (ar as! Array<Any>)
                         self.arr_list_of_all_users.addObjects(from: ar as! [Any])
-                        // print(self.arrListOfUsers as Any)
                         
-                        
-                        
-                        
-                        
-                        /*
-                         if let myString = defaults.string(forKey: "keyFirstTime") {
-                         if myString == "firstTime" {
-                         self.ary_mutable.addObjects(from: self.arrListOfUsers)
-                         // print(self.ary_mutable as Any)
-                         
-                         defaults.set("firstTime2", forKey: "keyFirstTime")
-                         
-                         self.thirdArray.addObjects(from: self.ary_mutable.addingObjects(from: self.objects) as [AnyObject])
-                         
-                         // print(self.thirdArray as Any)
-                         
-                         
-                         
-                         
-                         
-                         
-                         
-                         
-                         }
-                         else {
-                         print("second time")
-                         }
-                         }
-                         
-                         
-                         
-                         
-                         
-                         
-                         
-                         
-                         */
                         self.tbleView.delegate = self
                         self.tbleView.dataSource = self
                         self.tbleView.reloadData()
-                        
+                        self.loadMore = 999999
                         
                     }
                     else
@@ -556,23 +520,25 @@ class SendMoney: UIViewController, MFMessageComposeViewControllerDelegate,UITabl
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-                
-        if scrollView == self.tbleView {
-            let isReachingEnd = scrollView.contentOffset.y >= 0
-                && scrollView.contentOffset.y >= (scrollView.contentSize.height - scrollView.frame.size.height)
-            if(isReachingEnd) {
-                if(loadMore == 1) {
-                    loadMore = 0
-                    page += 1
-                    print(page as Any)
-                    
-                    
+        if(self.loadMore == 999999) {
+            self.searchArrayStr = "1"
+        } else{
+            if scrollView == self.tbleView {
+                let isReachingEnd = scrollView.contentOffset.y >= 0
+                    && scrollView.contentOffset.y >= (scrollView.contentSize.height - scrollView.frame.size.height)
+                if(isReachingEnd) {
+                    if(loadMore == 1) {
+                        loadMore = 0
+                        page += 1
+                        print(page as Any)
+
                         self.usersListWB(pageNumber: page)
-                    
-                    
+                        
+                    }
                 }
             }
         }
+        
     }
     
     //MARK:- USERS LIST
@@ -993,7 +959,7 @@ class SendMoney: UIViewController, MFMessageComposeViewControllerDelegate,UITabl
             if self.strCheckSearchArray == "1" {
                 let contact2 = self.arr_list_of_all_users[indexPath.row]
                 let settingsVCId = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "ProceedToPayId") as? ProceedToPay
-                self.strCheckSearchArray = "0"
+//                self.strCheckSearchArray = "0"
                 // settingsVCId!.strRequestOrPay = "req"
                 settingsVCId!.dictGetSendMoneyUserDetails = (contact2 as! NSDictionary)
                 self.navigationController?.pushViewController(settingsVCId!, animated: true)

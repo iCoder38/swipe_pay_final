@@ -532,8 +532,7 @@ extension RequestMoneyUser: UITableViewDataSource
                 
          var parameters:Dictionary<AnyHashable, Any>!
             
-          if let person = UserDefaults.standard.value(forKey: "keyLoginFullData") as? [String:Any]
-          {
+          if let person = UserDefaults.standard.value(forKey: "keyLoginFullData") as? [String:Any] {
               let x : Int = (person["userId"] as! Int)
               let myString = String(x)
              

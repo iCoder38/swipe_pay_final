@@ -758,7 +758,7 @@ class AddMoney: UIViewController,UITextFieldDelegate,UIPickerViewDelegate,UIPick
                 parameters = [
                     "action"        :"chargebybank",
                     "cutomer_id"    :"\(person["stripeCustomerNo"]!)",
-                    "amount"        :"\(myDouble!)",
+                    "amount"        :myDouble!*Double(100),
                     "stripeBankAccountNo":String(saveBankAccountId)
                 ]
                     /*parameters = [
@@ -807,19 +807,20 @@ class AddMoney: UIViewController,UITextFieldDelegate,UIPickerViewDelegate,UIPick
                         
                         self.myStripeTokeinIdIs = ""
                         
-                        var dict: Dictionary<AnyHashable, Any>
-                        dict = JSON["data"] as! Dictionary<AnyHashable, Any>
+
                         
-                        var strSuccess2 : String!
-                        strSuccess2 = dict["card"] as Any as? String
-                        
-                        // var strSuccessAlert2 : String!
-                        // strSuccessAlert2 = JSON["card"]as Any as? String
+                         var transactionId : String!
+                        transactionId = JSON["transactionId"]as Any as? String
                         
                         if self.strGetBankOrCard == "CARD" {
+                                                    var dict: Dictionary<AnyHashable, Any>
+                                                    dict = JSON["data"] as! Dictionary<AnyHashable, Any>
+                                                    
+                                                    var strSuccess2 : String!
+                                                    strSuccess2 = dict["card"] as Any as? String
                             self.sendFinalPaymentToOurServer(strCardResponse: strSuccess2)
                         } else {
-                            self.sendFinalPaymentToOurServerToBank(strCardResponse: strSuccess2)
+                            self.sendFinalPaymentToOurServerToBank(strCardResponse: transactionId)
                         }
                         
                     }
@@ -1001,12 +1002,12 @@ class AddMoney: UIViewController,UITextFieldDelegate,UIPickerViewDelegate,UIPick
        
             let defaults = UserDefaults.standard
             let userName = defaults.string(forKey: "KeyLoginPersonal")
-            if userName == "loginViaPersonal" {
+            /*if userName == "loginViaPersonal" {
                 ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Please wait...")
             }
             else {
                 ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Please wait...")
-            }
+            }*/
             
             let urlString = BASE_URL_SWIIPE
                    
@@ -1021,7 +1022,7 @@ class AddMoney: UIViewController,UITextFieldDelegate,UIPickerViewDelegate,UIPick
                        parameters = [
                            "action"         : "addmoney",
                            "userId"         : String(myString),
-                           "transactionID"  : "",
+                           "transactionID"  : String(strCardResponse),
                            "amount"         : String(self.txtAmount.text!),
                            "transactionBy"  : String("BANK"),
                            "cardId"         : String(""),
@@ -1049,7 +1050,7 @@ class AddMoney: UIViewController,UITextFieldDelegate,UIPickerViewDelegate,UIPick
                                    var strSuccessAlert : String!
                                    strSuccessAlert = JSON["msg"]as Any as? String
                                    
-                                   if strSuccess == "success" //true
+                                   if strSuccess == "success" // true
                                    {
                                     
                                        // var dict: Dictionary<AnyHashable, Any>

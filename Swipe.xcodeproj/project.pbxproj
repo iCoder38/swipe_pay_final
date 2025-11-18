@@ -1486,6 +1486,8 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = NHVZESNL9B;
 				INFOPLIST_FILE = Swipe/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = SwipeJr;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.finance";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1516,6 +1518,8 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = NHVZESNL9B;
 				INFOPLIST_FILE = Swipe/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = SwipeJr;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.finance";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

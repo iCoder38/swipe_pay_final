@@ -454,7 +454,7 @@ class GetStartedNowNewRegistraiton: UIViewController,UITextFieldDelegate {
                             // var strSuccess2 : String!
                             // strSuccess2 = JSON["stripeCustomerNo"]as Any as? String
                             
-                            self.openOTPscreen(myPhoneNumber: cell.txtPhone.text!)
+                            self.openOTPscreen(myPhoneNumber: cell.txtPhone.text!, myEmail: cell.txtEmail.text!)
                             
                         }
                         else {
@@ -492,10 +492,11 @@ class GetStartedNowNewRegistraiton: UIViewController,UITextFieldDelegate {
     
     
     
-    @objc func openOTPscreen(myPhoneNumber:String) {
+    @objc func openOTPscreen(myPhoneNumber:String,myEmail:String) {
         
         let settingsVCId = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "OTPId") as? OTP
         settingsVCId!.getNumber = myPhoneNumber
+        settingsVCId!.getEmail = myEmail
         self.present(settingsVCId!, animated: true, completion: nil)
         
     }
@@ -615,7 +616,7 @@ class GetStartedNowNewRegistraiton: UIViewController,UITextFieldDelegate {
                                           print(strSuccess2 as Any)
                                          
                                             
-                self.openOTPscreen(myPhoneNumber: cell.txtPhone.text!)
+                                            self.openOTPscreen(myPhoneNumber: cell.txtPhone.text!,myEmail: cell.txtEmail.text!)
                                             
                                             
                                             

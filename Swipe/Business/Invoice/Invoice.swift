@@ -188,7 +188,7 @@ class Invoice: UIViewController {
 
                                
                                let JSON = data as! NSDictionary
-                                // print(JSON)
+//                                 print(JSON)
                                
                                var strSuccess : String!
                                strSuccess = JSON["status"]as Any as? String
@@ -198,6 +198,7 @@ class Invoice: UIViewController {
                                
                                if strSuccess == "success" //true
                                {
+                                   
                                 // var strPercentage : String!
                                 // strPercentage = JSON["percentage"]as Any as? String
                                 // print(strPercentage as Any)

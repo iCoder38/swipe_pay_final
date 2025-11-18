@@ -103,22 +103,32 @@ class PersonalDashbaord: UIViewController,MFMailComposeViewControllerDelegate, U
         
         self.navigationController?.setNavigationBarHidden(true, animated: true)
         
-        
-        self.gerServerFullData()
+           if let person = UserDefaults.standard.value(forKey: "keyLoginFullData") as? [String:Any] {
+               if("\(person["stripeCustomerNo"]!)" == "") {
+                   self.create_Stripe_account_After_evs_register()
+               }
+           }
+           
        }
+    
+    
     
     
     @objc func create_Stripe_account_After_evs_register() {
         self.view.endEditing(true)
         
         let urlString = base_url_create_Stripe_customer
-        
         var parameters:Dictionary<AnyHashable, Any>!
         
-        parameters = [
-            "action"        : "createCustomer",
-            "email"         : String("")
-        ]
+         ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Please wait...")
+        
+        if let person = UserDefaults.standard.value(forKey: "keyLoginFullData") as? [String:Any] {
+            
+            parameters = [
+                "action"        : "createCustomer",
+                "email"         : "\(person["email"]!)"
+            ]
+        }
         
         print("parameters-------\(String(describing: parameters))")
         
@@ -136,20 +146,15 @@ class PersonalDashbaord: UIViewController,MFMailComposeViewControllerDelegate, U
                     strSuccess = JSON["status"]as Any as? String
                     
                     if strSuccess == "success" {
-                        
                         var strSuccess2 : String!
                         strSuccess2 = JSON["stripeCustomerNo"]as Any as? String
+                        self.edit_profile_after_success_register_stripe_wb(strStripeCustomerNumber: strSuccess2)
                         
-//                        self.edit_profile_after_success_register_stripe_wb(strStripeCustomerNumber: strSuccess2)
                         
                     }
                     else {
-                        
-                        // self.indicator.stopAnimating()
-                        // self.enableService()
                         CRNotifications.showNotification(type: CRNotifications.error, title: "Error!", message:"Something went wrong. Please try again after some time", dismissDelay: 1.5, completion:{})
                         ERProgressHud.sharedInstance.hide()
-                        // self.dismiss(animated: true, completion: nil)
                         
                     }
                     
@@ -176,6 +181,170 @@ class PersonalDashbaord: UIViewController,MFMailComposeViewControllerDelegate, U
             }
         }
     }
+    
+    
+    @objc func edit_profile_after_success_register_stripe_wb(strStripeCustomerNumber:String) {
+        self.view.endEditing(true)
+         
+        let urlString = BASE_URL_SWIIPE
+        
+        var parameters:Dictionary<AnyHashable, Any>!
+        
+        // ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Please wait...")
+        
+        if let person = UserDefaults.standard.value(forKey: "keyLoginFullData") as? [String:Any] {
+            let x : Int = (person["userId"] as! Int)
+            let myString = String(x)
+            
+            parameters = [
+                "action"            : "editprofile",
+                "userId"            : String(myString),
+                "stripeCustomerNo"  : String(strStripeCustomerNumber)
+            ]
+            
+            print("parameters-------\(String(describing: parameters))")
+            
+            Alamofire.request(urlString, method: .post, parameters: parameters as? Parameters).responseJSON {
+                response in
+                
+                switch(response.result) {
+                case .success(_):
+                    if let data = response.result.value {
+                        
+                        let JSON = data as! NSDictionary
+                        print(JSON)
+                        
+                        /*
+                         status = success;
+                         stripeCustomerNo = "cus_KRV17ynbdsq3bN";
+                         */
+                        var strSuccess : String!
+                        strSuccess = JSON["status"]as Any as? String
+                        
+                        /*var strSuccessAlert : String!
+                         strSuccessAlert = JSON["msg"]as Any as? String*/
+                        
+                        if strSuccess == "success" {
+                            
+                            ERProgressHud.sharedInstance.hide()
+                            self.refreshPage()
+                        }
+                        else {
+                            // self.indicator.stopAnimating()
+                            // self.enableService()
+                            CRNotifications.showNotification(type: CRNotifications.error, title: "Error!", message:"Something went wrong. Please try again after some time", dismissDelay: 1.5, completion:{})
+                            ERProgressHud.sharedInstance.hide()
+                            // self.dismiss(animated: true, completion: nil)
+                        }
+                        
+                    }
+                    
+                case .failure(_):
+                    print("Error message:\(String(describing: response.result.error))")
+                    // self.indicator.stopAnimating()
+                    // self.enableService()
+                    ERProgressHud.sharedInstance.hide()
+                    
+                    let alertController = UIAlertController(title: nil, message: SERVER_ISSUE_MESSAGE_ONE+"\n"+SERVER_ISSUE_MESSAGE_TWO, preferredStyle: .actionSheet)
+                    
+                    let okAction = UIAlertAction(title: "OK", style: UIAlertAction.Style.default) {
+                        UIAlertAction in
+                        NSLog("OK Pressed")
+                    }
+                    
+                    alertController.addAction(okAction)
+                    
+                    self.present(alertController, animated: true, completion: nil)
+                    
+                    break
+                }
+            }
+        }
+    }
+    
+    
+    @objc func refreshPage() {
+        self.view.endEditing(true)
+         
+        let urlString = BASE_URL_SWIIPE
+        
+        var parameters:Dictionary<AnyHashable, Any>!
+        
+        // ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Please wait...")
+        
+        if let person = UserDefaults.standard.value(forKey: "keyLoginFullData") as? [String:Any] {
+            let x : Int = (person["userId"] as! Int)
+            let myString = String(x)
+            
+            parameters = [
+                "action"            : "editprofile",
+                "userId"            : String(myString),
+                 
+            ]
+            
+            print("parameters-------\(String(describing: parameters))")
+            
+            Alamofire.request(urlString, method: .post, parameters: parameters as? Parameters).responseJSON {
+                response in
+                
+                switch(response.result) {
+                case .success(_):
+                    if let data = response.result.value {
+                        
+                        let JSON = data as! NSDictionary
+                        print(JSON)
+                         
+                        var strSuccess : String!
+                        strSuccess = JSON["status"]as Any as? String
+                         
+                        if strSuccess == "success" {
+                            
+                            var dict: Dictionary<AnyHashable, Any>
+                            dict = JSON["data"] as! Dictionary<AnyHashable, Any>
+                            
+                            let defaults = UserDefaults.standard
+                            defaults.setValue(dict, forKey: "keyLoginFullData")
+                            
+                            ERProgressHud.sharedInstance.hide()
+                            
+                            self.gerServerFullData()
+                            
+                        }
+                        else {
+                            // self.indicator.stopAnimating()
+                            // self.enableService()
+                            CRNotifications.showNotification(type: CRNotifications.error, title: "Error!", message:"Something went wrong. Please try again after some time", dismissDelay: 1.5, completion:{})
+                            ERProgressHud.sharedInstance.hide()
+                            // self.dismiss(animated: true, completion: nil)
+                        }
+                        
+                    }
+                    
+                case .failure(_):
+                    print("Error message:\(String(describing: response.result.error))")
+                    // self.indicator.stopAnimating()
+                    // self.enableService()
+                    ERProgressHud.sharedInstance.hide()
+                    
+                    let alertController = UIAlertController(title: nil, message: SERVER_ISSUE_MESSAGE_ONE+"\n"+SERVER_ISSUE_MESSAGE_TWO, preferredStyle: .actionSheet)
+                    
+                    let okAction = UIAlertAction(title: "OK", style: UIAlertAction.Style.default) {
+                        UIAlertAction in
+                        NSLog("OK Pressed")
+                    }
+                    
+                    alertController.addAction(okAction)
+                    
+                    self.present(alertController, animated: true, completion: nil)
+                    
+                    break
+                }
+            }
+        }
+    }
+    
+    
+    
     
     
     

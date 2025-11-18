@@ -434,6 +434,7 @@ class SendMoneyPersonal: UIViewController,MFMessageComposeViewControllerDelegate
     @objc func searchUsersListWB(strSearchKeyWord:String) {
         // ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Please wait...")
         
+        self.list_of_all_users.removeAllObjects()
         
         let defaults = UserDefaults.standard
         let userName = defaults.string(forKey: "KeyLoginPersonal")
@@ -505,42 +506,6 @@ class SendMoneyPersonal: UIViewController,MFMessageComposeViewControllerDelegate
                         // print(self.arrListOfUsers as Any)
                         self.searchArrayStr = "1"
                         
-                        
-                        
-                        
-                        /*
-                         if let myString = defaults.string(forKey: "keyFirstTime") {
-                         if myString == "firstTime" {
-                         self.ary_mutable.addObjects(from: self.arrListOfUsers)
-                         // print(self.ary_mutable as Any)
-                         
-                         defaults.set("firstTime2", forKey: "keyFirstTime")
-                         
-                         self.thirdArray.addObjects(from: self.ary_mutable.addingObjects(from: self.objects) as [AnyObject])
-                         
-                         // print(self.thirdArray as Any)
-                         
-                         
-                         
-                         
-                         
-                         
-                         
-                         
-                         }
-                         else {
-                         print("second time")
-                         }
-                         }
-                         
-                         
-                         
-                         
-                         
-                         
-                         
-                         
-                         */
                         self.tbleView.delegate = self
                         self.tbleView.dataSource = self
                         self.tbleView.reloadData()
@@ -712,7 +677,9 @@ class SendMoneyPersonal: UIViewController,MFMessageComposeViewControllerDelegate
     
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-                
+        if(self.searchArrayStr == "1") {
+            return
+        }
         if self.segmentControls.selectedSegmentIndex == 0 {
             
             if scrollView == self.tbleView {
@@ -809,7 +776,7 @@ class SendMoneyPersonal: UIViewController,MFMessageComposeViewControllerDelegate
                 "action"         : "userlist",
                 "userId"         : String(myString),
                 "pageNo"         : pageNumber,
-                "keyword"        : ""//String(strSearchKeyWord)
+                "keyword"        : "" //String(strSearchKeyWord)
             ]
         }
         
@@ -854,20 +821,10 @@ class SendMoneyPersonal: UIViewController,MFMessageComposeViewControllerDelegate
                         if let myString = defaults.string(forKey: "keyFirstTime") {
                             if myString == "firstTime" {
                                 self.ary_mutable.addObjects(from: self.list_of_all_users as! [Any])
-                                // print(self.ary_mutable as Any)
                                 
                                 defaults.set("firstTime2", forKey: "keyFirstTime")
                                 
                                 self.thirdArray.addObjects(from: self.ary_mutable.addingObjects(from: self.objects) as [AnyObject])
-                                
-                                // print(self.thirdArray as Any)
-                                
-                                
-                                
-                                
-                                
-                                
-                                
                                 
                             }
                             else {
@@ -1109,6 +1066,7 @@ class SendMoneyPersonal: UIViewController,MFMessageComposeViewControllerDelegate
         
         if searchArrayStr == "1" {
             let contact = self.list_of_all_users[indexPath.row]
+            print(contact)
             let fbemail = ((contact as AnyObject)["userName"]! as? String ?? "")
             cell.PersonNameLabel.text = fbemail
             
@@ -1280,10 +1238,14 @@ class SendMoneyPersonal: UIViewController,MFMessageComposeViewControllerDelegate
         let defaults = UserDefaults.standard
         let userName = defaults.string(forKey: "KeyLoginPersonal")
         if userName == "loginViaPersonal" {
+            print(self.strCheckSearchArray)
             if self.strCheckSearchArray == "1" {
+                print(self.list_of_all_users)
                 let contact2 = self.list_of_all_users[indexPath.row]
+                print(contact2)
+                
                 let settingsVCId = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "ProceedToPayForRequestId") as? ProceedToPayForRequest
-                self.strCheckSearchArray = "0"
+//                self.strCheckSearchArray = "0"
                 print(contact2 as Any)
                 settingsVCId!.strRequestOrPay = "req"
                 settingsVCId!.dictGetSendMoneyUserDetails = (contact2 as! NSDictionary)
