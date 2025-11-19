@@ -1252,6 +1252,7 @@ class SendMoneyPersonal: UIViewController,MFMessageComposeViewControllerDelegate
                 self.navigationController?.pushViewController(settingsVCId!, animated: true)
             }
             else {
+                // 7006767992
                 if segmentControls.selectedSegmentIndex == 1 {
                     let contact2 = self.arr_list_of_send_receive[indexPath.row]
                     /*

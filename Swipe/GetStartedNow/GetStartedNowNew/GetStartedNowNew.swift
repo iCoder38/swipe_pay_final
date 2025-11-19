@@ -113,7 +113,7 @@ class GetStartedNowNew: UIViewController,UITextFieldDelegate {
                 // i am logged out
             }
             navigationBar.backgroundColor = NAVIGATION_PERSONAL_BACKGROUND_COLOR
-            lblBusinessOrpersonal.text = "PERSONAL"
+            lblBusinessOrpersonal.text = ""
             imgBGColor.image = UIImage(named:"PloginBG")
             
             self.img_login_screen.image = UIImage(named:"new_personal_logo")
@@ -143,7 +143,7 @@ class GetStartedNowNew: UIViewController,UITextFieldDelegate {
                 // i am logged out
             }
             navigationBar.backgroundColor = NAVIGATION_BUSINESS_BACKGROUND_COLOR
-            lblBusinessOrpersonal.text = "BUSINESS"
+            lblBusinessOrpersonal.text = "PARENT"
             imgBGColor.image = UIImage(named:"bLoginBG")
             self.signInBusinessSubmitGradientColor()
         }

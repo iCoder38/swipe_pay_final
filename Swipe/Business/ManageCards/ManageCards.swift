@@ -136,6 +136,8 @@ class ManageCards: UIViewController {
         super.viewWillAppear(true)
         navigationController?.setNavigationBarHidden(true, animated: animated)
         
+        self.arr_list_of_all_cards.removeAllObjects()
+        
         //MARK:- LIST OF CARDS WEBSERVICE CALLS FROM HERE
         self.manageCardList(pageNumber: 1)
     }

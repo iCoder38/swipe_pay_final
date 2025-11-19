@@ -14,7 +14,7 @@ import SwiftyJSON
 import CRNotifications
 
 class PersonalDashbaord: UIViewController,MFMailComposeViewControllerDelegate, UIImagePickerControllerDelegate,UINavigationControllerDelegate {
-
+    
     var imgUploadYesOrNo:String!
     
     // image
@@ -25,27 +25,27 @@ class PersonalDashbaord: UIViewController,MFMailComposeViewControllerDelegate, U
     var arrImageTitleStatic = ["p1",
                                "p2",
                                "p7",
-                                "receiveMoney",
+                               "receiveMoney",
                                "p9",
                                "p10",
                                "p3",
                                "p5",
                                "p8"]
     
-     @IBOutlet weak var navigationBar:UIView! {
-           didSet {
-               navigationBar.backgroundColor = NAVIGATION_PERSONAL_BACKGROUND_COLOR
-           }
-       }
-       
-       @IBOutlet weak var lblNavigationTitle:UILabel! {
-           didSet {
-               lblNavigationTitle.text = "Dashboard"
-               lblNavigationTitle.textColor = .white
-           }
-       }
-       
-       @IBOutlet weak var btnBack:UIButton!
+    @IBOutlet weak var navigationBar:UIView! {
+        didSet {
+            navigationBar.backgroundColor = NAVIGATION_PERSONAL_BACKGROUND_COLOR
+        }
+    }
+    
+    @IBOutlet weak var lblNavigationTitle:UILabel! {
+        didSet {
+            lblNavigationTitle.text = "Dashboard"
+            lblNavigationTitle.textColor = .white
+        }
+    }
+    
+    @IBOutlet weak var btnBack:UIButton!
     
     @IBOutlet weak var lblTotalAmountInWallet:UILabel!
     
@@ -55,7 +55,7 @@ class PersonalDashbaord: UIViewController,MFMailComposeViewControllerDelegate, U
             lblAmountLeftInAccoun.textColor = .white
         }
     }
-
+    
     @IBOutlet weak var imgBusinessUserProfileImage:UIImageView! {
         didSet {
             imgBusinessUserProfileImage.layer.cornerRadius = 70
@@ -87,8 +87,8 @@ class PersonalDashbaord: UIViewController,MFMailComposeViewControllerDelegate, U
         }
     }
     
-        @IBOutlet weak var clView: UICollectionView! {
-            didSet {
+    @IBOutlet weak var clView: UICollectionView! {
+        didSet {
             //collection
             clView!.dataSource = self
             clView!.delegate = self
@@ -97,20 +97,20 @@ class PersonalDashbaord: UIViewController,MFMailComposeViewControllerDelegate, U
         }
     }
     
-       override func viewDidLoad() {
+    override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = DASHBOARD_BACKGROUND_COLOR
         
         self.navigationController?.setNavigationBarHidden(true, animated: true)
         
-           if let person = UserDefaults.standard.value(forKey: "keyLoginFullData") as? [String:Any] {
-               if("\(person["stripeCustomerNo"]!)" == "") {
-                   self.create_Stripe_account_After_evs_register()
-               }
-           }
-           
-       }
-    
+        if let person = UserDefaults.standard.value(forKey: "keyLoginFullData") as? [String:Any] {
+            if("\(person["stripeCustomerNo"]!)" == "") {
+                self.create_Stripe_account_After_evs_register()
+            }else{
+                self.refreshPage()
+            }
+        }
+    }
     
     
     
@@ -120,7 +120,7 @@ class PersonalDashbaord: UIViewController,MFMailComposeViewControllerDelegate, U
         let urlString = base_url_create_Stripe_customer
         var parameters:Dictionary<AnyHashable, Any>!
         
-         ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Please wait...")
+        ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Please wait...")
         
         if let person = UserDefaults.standard.value(forKey: "keyLoginFullData") as? [String:Any] {
             
@@ -185,7 +185,7 @@ class PersonalDashbaord: UIViewController,MFMailComposeViewControllerDelegate, U
     
     @objc func edit_profile_after_success_register_stripe_wb(strStripeCustomerNumber:String) {
         self.view.endEditing(true)
-         
+        
         let urlString = BASE_URL_SWIIPE
         
         var parameters:Dictionary<AnyHashable, Any>!
@@ -265,7 +265,7 @@ class PersonalDashbaord: UIViewController,MFMailComposeViewControllerDelegate, U
     
     @objc func refreshPage() {
         self.view.endEditing(true)
-         
+        
         let urlString = BASE_URL_SWIIPE
         
         var parameters:Dictionary<AnyHashable, Any>!
@@ -279,7 +279,6 @@ class PersonalDashbaord: UIViewController,MFMailComposeViewControllerDelegate, U
             parameters = [
                 "action"            : "editprofile",
                 "userId"            : String(myString),
-                 
             ]
             
             print("parameters-------\(String(describing: parameters))")
@@ -293,10 +292,10 @@ class PersonalDashbaord: UIViewController,MFMailComposeViewControllerDelegate, U
                         
                         let JSON = data as! NSDictionary
                         print(JSON)
-                         
+                        
                         var strSuccess : String!
                         strSuccess = JSON["status"]as Any as? String
-                         
+                        
                         if strSuccess == "success" {
                             
                             var dict: Dictionary<AnyHashable, Any>
@@ -353,7 +352,7 @@ class PersonalDashbaord: UIViewController,MFMailComposeViewControllerDelegate, U
     @objc func gerServerFullData() {
         if let person = UserDefaults.standard.value(forKey: "keyLoginFullData") as? [String:Any]
         {
-              // print(person)
+            // print(person)
             
             /*
              BEmail = "busi@h.com";
@@ -424,28 +423,28 @@ class PersonalDashbaord: UIViewController,MFMailComposeViewControllerDelegate, U
             
             /*
              let livingArea = person["wallet"] as? Int ?? 0
-               if livingArea == 0 {
-                   let stringValue = String(livingArea)
-                self.lblTotalAmountInWallet.text = "$ "+stringValue+"     "
-               }
-               else
-               {
-                   let stringValue = String(livingArea)
-                   self.lblTotalAmountInWallet.text = "$ "+stringValue+"     "
-               }
-           */
-           
+             if livingArea == 0 {
+             let stringValue = String(livingArea)
+             self.lblTotalAmountInWallet.text = "$ "+stringValue+"     "
+             }
+             else
+             {
+             let stringValue = String(livingArea)
+             self.lblTotalAmountInWallet.text = "$ "+stringValue+"     "
+             }
+             */
+            
         }
         else
         {
-           // business name
-           lblBusinessUserName.text = SERVER_ISSUE_TITLE
-           
-           // business phone
-           btnCall.setTitle(SERVER_ISSUE_TITLE, for: .normal)
-           
-           // business email
-           btnMail.setTitle(SERVER_ISSUE_TITLE, for: .normal)
+            // business name
+            lblBusinessUserName.text = SERVER_ISSUE_TITLE
+            
+            // business phone
+            btnCall.setTitle(SERVER_ISSUE_TITLE, for: .normal)
+            
+            // business email
+            btnMail.setTitle(SERVER_ISSUE_TITLE, for: .normal)
         }
     }
     @objc func imageTapped(tapGestureRecognizer: UITapGestureRecognizer)
@@ -453,8 +452,8 @@ class PersonalDashbaord: UIViewController,MFMailComposeViewControllerDelegate, U
         let alertController = UIAlertController(title: "View / Upload image", message: nil, preferredStyle: .actionSheet)
         
         let logoutAction = UIAlertAction(title: "View Image", style: UIAlertAction.Style.default) {
-                UIAlertAction in
-                NSLog("OK Pressed")
+            UIAlertAction in
+            NSLog("OK Pressed")
             
             let present = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "OpenImageInFullViewId") as? OpenImageInFullView
             if let person = UserDefaults.standard.value(forKey: "keyLoginFullData") as? [String:Any] {
@@ -463,7 +462,7 @@ class PersonalDashbaord: UIViewController,MFMailComposeViewControllerDelegate, U
             }
             self.present(present!, animated: true, completion: nil)
             
-            }
+        }
         
         let okAction = UIAlertAction(title: "Upload image via Camera", style: UIAlertAction.Style.default) {
             UIAlertAction in
@@ -527,110 +526,110 @@ class PersonalDashbaord: UIViewController,MFMailComposeViewControllerDelegate, U
     }
     
     @objc func editWithImage() {
-
+        
         if let person = UserDefaults.standard.value(forKey: "keyLoginFullData") as? [String:Any] {
             
-         let x : Int = (person["userId"] as! Int)
-         let myString = String(x)
-          
+            let x : Int = (person["userId"] as! Int)
+            let myString = String(x)
+            
             // var parameters:Dictionary<AnyHashable, Any>!
-                 let parameters = [
-                     "action"    : "editprofile",
-                     "userId"    : String(myString),
-                 ]
-                
-                    print(parameters as Any)
-                
-                Alamofire.upload(multipartFormData: { multipartFormData in
+            let parameters = [
+                "action"    : "editprofile",
+                "userId"    : String(myString),
+            ]
+            
+            print(parameters as Any)
+            
+            Alamofire.upload(multipartFormData: { multipartFormData in
                 multipartFormData.append(self.imgData, withName: "image",fileName: "SwiipePersonalEditProfile.jpg", mimeType: "image/jpg")
-                    for (key, value) in parameters {
+                for (key, value) in parameters {
+                    
+                    // let paramsData:Data = NSKeyedArchiver.archivedData(withRootObject: value)
+                    
+                    multipartFormData.append(value.data(using: String.Encoding.utf8)!, withName: key)
+                }
+            },
+                             to:BASE_URL_SWIIPE)
+            { (result) in
+                switch result {
+                case .success(let upload, _, _):
+                    
+                    upload.uploadProgress(closure: { (progress) in
+                        //print("Upload Progress: \(progress.fractionCompleted)")
                         
-                        // let paramsData:Data = NSKeyedArchiver.archivedData(withRootObject: value)
+                        let alertController = UIAlertController(title: "Uploading image", message: "Please wait......", preferredStyle: .alert)
                         
-                        multipartFormData.append(value.data(using: String.Encoding.utf8)!, withName: key)
-                    }
-                },
-                to:BASE_URL_SWIIPE)
-                { (result) in
-                    switch result {
-                    case .success(let upload, _, _):
-
-                        upload.uploadProgress(closure: { (progress) in
-                            //print("Upload Progress: \(progress.fractionCompleted)")
+                        let progressDownload : UIProgressView = UIProgressView(progressViewStyle: .default)
+                        
+                        progressDownload.setProgress(Float((progress.fractionCompleted)/1.0), animated: true)
+                        progressDownload.frame = CGRect(x: 10, y: 70, width: 250, height: 0)
+                        
+                        alertController.view.addSubview(progressDownload)
+                        self.present(alertController, animated: true, completion: nil)
+                    })
+                    
+                    upload.responseJSON { response in
+                        //print(response.result.value as Any)
+                        if let data = response.result.value
+                        {
+                            let JSON = data as! NSDictionary
+                            print(JSON)
                             
-                            let alertController = UIAlertController(title: "Uploading image", message: "Please wait......", preferredStyle: .alert)
-
-                            let progressDownload : UIProgressView = UIProgressView(progressViewStyle: .default)
-
-                            progressDownload.setProgress(Float((progress.fractionCompleted)/1.0), animated: true)
-                            progressDownload.frame = CGRect(x: 10, y: 70, width: 250, height: 0)
-
-                            alertController.view.addSubview(progressDownload)
-                            self.present(alertController, animated: true, completion: nil)
-                        })
-
-                        upload.responseJSON { response in
-                            //print(response.result.value as Any)
-                            if let data = response.result.value
-                            {
-                                 let JSON = data as! NSDictionary
-                                print(JSON)
-
-                                var dict: Dictionary<AnyHashable, Any>
-                                dict = JSON["data"] as! Dictionary<AnyHashable, Any>
-                                
-                                let defaults = UserDefaults.standard
-                                defaults.setValue(dict, forKey: "keyLoginFullData")
-                                
-                                self.imgUploadYesOrNo = "0"
-                                
-                                
-                                
-                                if let person = UserDefaults.standard.value(forKey: "keyLoginFullData") as? [String:Any] {
+                            var dict: Dictionary<AnyHashable, Any>
+                            dict = JSON["data"] as! Dictionary<AnyHashable, Any>
+                            
+                            let defaults = UserDefaults.standard
+                            defaults.setValue(dict, forKey: "keyLoginFullData")
+                            
+                            self.imgUploadYesOrNo = "0"
+                            
+                            
+                            
+                            if let person = UserDefaults.standard.value(forKey: "keyLoginFullData") as? [String:Any] {
                                 // business image
-                                    self.imgBusinessUserProfileImage.sd_setImage(with: URL(string: (person["image"] as! String)), placeholderImage: UIImage(named: "plainBack"))
-                                }
-                                
-                                
-                                
-                                ERProgressHud.sharedInstance.hide()
-                                self.dismiss(animated: true, completion: nil)
+                                self.imgBusinessUserProfileImage.sd_setImage(with: URL(string: (person["image"] as! String)), placeholderImage: UIImage(named: "plainBack"))
                             }
-                            else
-                            {
-                                CRNotifications.showNotification(type: CRNotifications.error, title: "Error!", message:"Server Not Responding. Please try again Later.", dismissDelay: 1.5, completion:{})
-
-                            }
+                            
+                            
+                            
+                            ERProgressHud.sharedInstance.hide()
+                            self.dismiss(animated: true, completion: nil)
                         }
-                    case .failure(let encodingError):
-                        print(encodingError)
-                        self.dismiss(animated: true, completion: nil)
-                    }}}
+                        else
+                        {
+                            CRNotifications.showNotification(type: CRNotifications.error, title: "Error!", message:"Server Not Responding. Please try again Later.", dismissDelay: 1.5, completion:{})
+                            
+                        }
+                    }
+                case .failure(let encodingError):
+                    print(encodingError)
+                    self.dismiss(animated: true, completion: nil)
+                }}}
         
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         sideBarMenuClick()
     }
-
-        @objc func sideBarMenuClick() {
-            if revealViewController() != nil {
+    
+    @objc func sideBarMenuClick() {
+        if revealViewController() != nil {
             btnBack.addTarget(self.revealViewController(), action: #selector(SWRevealViewController.revealToggle(_:)), for: .touchUpInside)
             
-                revealViewController().rearViewRevealWidth = 300
-                view.addGestureRecognizer(self.revealViewController().panGestureRecognizer())
-              }
+            revealViewController().rearViewRevealWidth = 300
+            view.addGestureRecognizer(self.revealViewController().panGestureRecognizer())
         }
+    }
     
-       override var preferredStatusBarStyle: UIStatusBarStyle {
-             return .lightContent
-       }
-       
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
     
-        @objc func callMethodClick() {
-            let url: NSURL = URL(string: "tel://8929963020")! as NSURL
-            UIApplication.shared.open(url as URL, options: [:], completionHandler: nil)
-        }
+    
+    @objc func callMethodClick() {
+        let url: NSURL = URL(string: "tel://8929963020")! as NSURL
+        UIApplication.shared.open(url as URL, options: [:], completionHandler: nil)
+    }
     
     @objc func mailMethodClick() {
         
@@ -641,73 +640,73 @@ class PersonalDashbaord: UIViewController,MFMailComposeViewControllerDelegate, U
             print("Can't send email")
         }
     }
-        func configureMailComposer() -> MFMailComposeViewController{
-            let mailComposeVC = MFMailComposeViewController()
-            mailComposeVC.mailComposeDelegate = self
-            mailComposeVC.setToRecipients(["dishantrajput88@gmail.com"])
-            mailComposeVC.setSubject("I AM SUBJECT")
-            mailComposeVC.setMessageBody("I AM BODY", isHTML: false)
-            return mailComposeVC
-        }
-        //MARK: - MFMail compose method
-        func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
-            controller.dismiss(animated: true, completion: nil)
-        }
-        /*
-           let mailComposeViewController = configuredMailComposeViewController()
-           if MFMailComposeViewController.canSendMail() {
-               self.present(mailComposeViewController, animated: true, completion: nil)
-           } else {
-               self.showSendMailErrorAlert()
-           }
-         */
-       //}
+    func configureMailComposer() -> MFMailComposeViewController{
+        let mailComposeVC = MFMailComposeViewController()
+        mailComposeVC.mailComposeDelegate = self
+        mailComposeVC.setToRecipients(["dishantrajput88@gmail.com"])
+        mailComposeVC.setSubject("I AM SUBJECT")
+        mailComposeVC.setMessageBody("I AM BODY", isHTML: false)
+        return mailComposeVC
+    }
+    //MARK: - MFMail compose method
+    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
+        controller.dismiss(animated: true, completion: nil)
+    }
+    /*
+     let mailComposeViewController = configuredMailComposeViewController()
+     if MFMailComposeViewController.canSendMail() {
+     self.present(mailComposeViewController, animated: true, completion: nil)
+     } else {
+     self.showSendMailErrorAlert()
+     }
+     */
+    //}
     
-/*
-       func configuredMailComposeViewController() -> MFMailComposeViewController {
-           let mailComposerVC = MFMailComposeViewController()
-           mailComposerVC.mailComposeDelegate = self // Extremely important to set the --mailComposeDelegate-- property, NOT the --delegate-- property
+    /*
+     func configuredMailComposeViewController() -> MFMailComposeViewController {
+     let mailComposerVC = MFMailComposeViewController()
+     mailComposerVC.mailComposeDelegate = self // Extremely important to set the --mailComposeDelegate-- property, NOT the --delegate-- property
+     
+     mailComposerVC.setToRecipients(["someone@somewhere.com"])
+     mailComposerVC.setSubject("I AM SUBJECT")
+     mailComposerVC.setMessageBody("I AM MESSAGE BODY", isHTML: false)
+     
+     return mailComposerVC
+     }
+     */
     
-            mailComposerVC.setToRecipients(["someone@somewhere.com"])
-            mailComposerVC.setSubject("I AM SUBJECT")
-            mailComposerVC.setMessageBody("I AM MESSAGE BODY", isHTML: false)
-    
-            return mailComposerVC
-        }
-    */
-
-        func showSendMailErrorAlert() {
-            let alert = UIAlertController(title: "Could Not Send Email", message: "You can always access your content by signing back in",         preferredStyle: UIAlertController.Style.alert)
-
-            alert.addAction(UIAlertAction(title: "Ok",
-                                          style: UIAlertAction.Style.default,
-                                          handler: {(_: UIAlertAction!) in
-                                            //Sign out action
-            }))
-            self.present(alert, animated: true, completion: nil)
-
-        }
+    func showSendMailErrorAlert() {
+        let alert = UIAlertController(title: "Could Not Send Email", message: "You can always access your content by signing back in",         preferredStyle: UIAlertController.Style.alert)
+        
+        alert.addAction(UIAlertAction(title: "Ok",
+                                      style: UIAlertAction.Style.default,
+                                      handler: {(_: UIAlertAction!) in
+            //Sign out action
+        }))
+        self.present(alert, animated: true, completion: nil)
+        
+    }
     
 }
 
 
-    extension PersonalDashbaord: UICollectionViewDelegate {
+extension PersonalDashbaord: UICollectionViewDelegate {
     //Write Delegate Code Here
     
-        func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "personalDetailsCollectionCell", for: indexPath as IndexPath) as! PersonalDetailsCollectionCell
-            
-            cell.lblTitle.text  = arrTitleStatic[indexPath.row]
-            cell.imgTitle.image = UIImage(named:arrImageTitleStatic[indexPath.row]) // UIImage(named:"edit")
-            
-            cell.imgTitle.backgroundColor = .clear//NAVIGATION_BUSINESS_BACKGROUND_COLOR
-            cell.imgTitle.layer.cornerRadius = 20
-            cell.imgTitle.clipsToBounds = true
-            
-            cell.lblTitle.textColor = .black
-            
-            cell.backgroundColor = .clear
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "personalDetailsCollectionCell", for: indexPath as IndexPath) as! PersonalDetailsCollectionCell
+        
+        cell.lblTitle.text  = arrTitleStatic[indexPath.row]
+        cell.imgTitle.image = UIImage(named:arrImageTitleStatic[indexPath.row]) // UIImage(named:"edit")
+        
+        cell.imgTitle.backgroundColor = .clear//NAVIGATION_BUSINESS_BACKGROUND_COLOR
+        cell.imgTitle.layer.cornerRadius = 20
+        cell.imgTitle.clipsToBounds = true
+        
+        cell.lblTitle.textColor = .black
+        
+        cell.backgroundColor = .clear
         
         return cell
     }
@@ -726,7 +725,7 @@ class PersonalDashbaord: UIViewController,MFMailComposeViewControllerDelegate, U
 extension PersonalDashbaord: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath)
     {
-
+        
         let defaults = UserDefaults.standard
         defaults.set("", forKey: "keySideBarMenu")
         defaults.set(nil, forKey: "keySideBarMenu")
@@ -741,83 +740,80 @@ extension PersonalDashbaord: UICollectionViewDataSource {
             self.navigationController?.pushViewController(settingsVCId!, animated: true)
         }
         else
-            if indexPath.row == 2 { // cashout
-                let settingsVCId = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "CashoutId") as? Cashout
-                self.navigationController?.pushViewController(settingsVCId!, animated: true)
-
+        if indexPath.row == 2 { // cashout
+            let settingsVCId = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "CashoutId") as? Cashout
+            self.navigationController?.pushViewController(settingsVCId!, animated: true)
+            
         }
         else
-            if indexPath.row == 3 { // cashout
-                
-                
-                let settingsVCId = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "SendMoneyPersonalId") as? SendMoneyPersonal
-                settingsVCId!.removePlusFromNavigation = "1"
-                self.navigationController?.pushViewController(settingsVCId!, animated: true)
-                
-                
-                
-                
-                
-                /*
-                let settingsVCId = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "SendMoneyId") as? SendMoney
-                settingsVCId!.removePlusFromNavigation = "1"
-                self.navigationController?.pushViewController(settingsVCId!, animated: true)
-                */
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                /*
-                let settingsVCId = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "ReceiveListId") as? ReceiveList
-                self.navigationController?.pushViewController(settingsVCId!, animated: true)
-                 */
-
+        if indexPath.row == 3 { // cashout
+            
+            
+            let settingsVCId = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "SendMoneyPersonalId") as? SendMoneyPersonal
+            settingsVCId!.removePlusFromNavigation = "1"
+            self.navigationController?.pushViewController(settingsVCId!, animated: true)
+            
+            
+            
+            
+            
+            /*
+             let settingsVCId = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "SendMoneyId") as? SendMoney
+             settingsVCId!.removePlusFromNavigation = "1"
+             self.navigationController?.pushViewController(settingsVCId!, animated: true)
+             */
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            /*
+             let settingsVCId = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "ReceiveListId") as? ReceiveList
+             self.navigationController?.pushViewController(settingsVCId!, animated: true)
+             */
+            
         }
         else
-            if indexPath.row == 4 { // transaction
+        if indexPath.row == 4 { // transaction
             let settingsVCId = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "AllTransactionId") as? AllTransaction
             self.navigationController?.pushViewController(settingsVCId!, animated: true)
         }
         else
-            if indexPath.row == 5 { // add money
-                let settingsVCId = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "AddMoneyId") as? AddMoney
-                self.navigationController?.pushViewController(settingsVCId!, animated: true)
-                /*
+        if indexPath.row == 5 { // add money
+            let settingsVCId = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "AddMoneyId") as? AddMoney
+            self.navigationController?.pushViewController(settingsVCId!, animated: true)
+            /*
+             
+             */
             
- */
-                
         }
         else
-            if indexPath.row == 6 { // bank account
+        if indexPath.row == 6 { // bank account
             let settingsVCId = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "BankAccountId") as? BankAccount
             self.navigationController?.pushViewController(settingsVCId!, animated: true)
         }
         else
-            if indexPath.row == 7 { // order card
+        if indexPath.row == 7 { // order card
             let settingsVCId = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: strOrderNewCardId) as? OrderNewCard
             self.navigationController?.pushViewController(settingsVCId!, animated: true)
         }
         else
-            if indexPath.row == 8 { // help
+        if indexPath.row == 8 { // help
             let settingsVCId = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "HelpId") as? Help
             self.navigationController?.pushViewController(settingsVCId!, animated: true)
         }
-       
+        
     }
     
     @objc func pushToBusinessProfile() {
         let settingsVCId = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "GetStartedNowId") as? GetStartedNow
         self.navigationController?.pushViewController(settingsVCId!, animated: true)
-
-        
-        
         
     }
     
@@ -835,41 +831,40 @@ extension PersonalDashbaord: UICollectionViewDelegateFlowLayout {
         
         
         var sizes: CGSize
-                
+        
         // let result = UIScreen.main.bounds.size
         //NSLog("%f",result.height)
-        
         
         sizes = CGSize(width: 120, height: 120)
         
         /*if result.height == 480
-        {
-            sizes = CGSize(width: 120, height: 120)
-        }
-        else if result.height == 568
-        {
-            sizes = CGSize(width: 120, height: 120)
-        }
-        else if result.height == 667.000000 // 8
-        {
-            sizes = CGSize(width: 120, height: 120)
-        }
-        else if result.height == 736.000000 // 8 plus
-        {
-            sizes = CGSize(width: 120, height: 120)
-        }
-        else if result.height == 812.000000 // 11 pro
-        {
-            sizes = CGSize(width: 120, height: 120)
-        }
-        else if result.height == 896.000000 // 11 , 11 pro max
-        {
-            sizes = CGSize(width: 120, height: 120)
-        }
-        else
-        {
-            sizes = CGSize(width: self.view.frame.size.width, height: 350)
-        }*/
+         {
+         sizes = CGSize(width: 120, height: 120)
+         }
+         else if result.height == 568
+         {
+         sizes = CGSize(width: 120, height: 120)
+         }
+         else if result.height == 667.000000 // 8
+         {
+         sizes = CGSize(width: 120, height: 120)
+         }
+         else if result.height == 736.000000 // 8 plus
+         {
+         sizes = CGSize(width: 120, height: 120)
+         }
+         else if result.height == 812.000000 // 11 pro
+         {
+         sizes = CGSize(width: 120, height: 120)
+         }
+         else if result.height == 896.000000 // 11 , 11 pro max
+         {
+         sizes = CGSize(width: 120, height: 120)
+         }
+         else
+         {
+         sizes = CGSize(width: self.view.frame.size.width, height: 350)
+         }*/
         
         
         return sizes
@@ -883,7 +878,7 @@ extension PersonalDashbaord: UICollectionViewDelegateFlowLayout {
     }
     
     func collectionView(_ collectionView: UICollectionView, layout
-        collectionViewLayout: UICollectionViewLayout,
+                        collectionViewLayout: UICollectionViewLayout,
                         minimumLineSpacingForSectionAt section: Int) -> CGFloat
     {
         return 0.0
@@ -894,21 +889,21 @@ extension PersonalDashbaord: UICollectionViewDelegateFlowLayout {
         return UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         
         /*let result = UIScreen.main.bounds.size
-        //NSLog("%f",result.height)
-        
-        if result.height == 812 // 11 pro
-        {
-            return UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-        }
-        else
-            if result.height == 667 // 11 pro
-            {
-                return UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-            }
-            else
-            {
-                return UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
-            }*/
+         //NSLog("%f",result.height)
+         
+         if result.height == 812 // 11 pro
+         {
+         return UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+         }
+         else
+         if result.height == 667 // 11 pro
+         {
+         return UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+         }
+         else
+         {
+         return UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
+         }*/
     }
     
 }
