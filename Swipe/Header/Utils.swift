@@ -59,17 +59,17 @@ let PLACEHOLDER_ADDRESS     = "Address"
 //MARK:- STORYBOARD IDs
 let strAllTransactionId         = "AllTransactionId"
 let strBusinessDashbaordId      = "BusinessDashbaordId"
-let strBusinessProcessingCardId    = "ProcessingCardListId"
+let strBusinessProcessingCardId = "ProcessingCardListId"
 let strOrderNewCardId           = "OrderNewCardId"
-let strOrderedCardList           = "OrderedCardListId"
-let strEditId                 = "EditProfileId"
-let strManageCardsId                 = "ManageCardsId"
-let strSendMoney                 = "SendMoneyId"
-let strAddMoneyId                 = "AddMoneyId"
-let strCashoutId                 = "CashoutId"
-let strCashoutTransaction                 = "CashoutTransactionId"
-let strHelpId                 = "HelpId"
-let strChangePassword                 = "ChangePasswordId"
+let strOrderedCardList          = "OrderedCardListId"
+let strEditId                   = "EditProfileId"
+let strManageCardsId            = "ManageCardsId"
+let strSendMoney                = "SendMoneyId"
+let strAddMoneyId               = "AddMoneyId"
+let strCashoutId                = "CashoutId"
+let strCashoutTransaction       = "CashoutTransactionId"
+let strHelpId                   = "HelpId"
+let strChangePassword           = "ChangePasswordId"
 
 // SERVER ISSUE
 let SERVER_ISSUE_TITLE          = "Server Issue."
@@ -77,8 +77,8 @@ let SERVER_ISSUE_MESSAGE_ONE    = "Server Not Responding."
 let SERVER_ISSUE_MESSAGE_TWO    = "Please contact to Server Admin."
 
 // validations
-let strNameValidation:String = "Name should not be empty."
-let strPhoneValidation:String = "Phone should not be empty."
+let strNameValidation:String    = "Name should not be empty."
+let strPhoneValidation:String   = "Phone should not be empty."
 
 class Utils: NSObject {
     

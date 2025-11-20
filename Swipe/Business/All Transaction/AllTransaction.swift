@@ -311,7 +311,7 @@ extension AllTransaction: UITableViewDataSource
             cell.lblAmount.textColor = .systemGreen
             
             // bank name
-            cell.lblBankName.text = "My Wallet" //(item!["receiverName"] as! String)
+            cell.lblBankName.text = "My Wallet"
             
             // my image
             // image
@@ -348,8 +348,8 @@ extension AllTransaction: UITableViewDataSource
             cell.imgProfilePicture.backgroundColor = .clear
         } else if (item!["type"] as! String) == "CASHOUT" {
             
-            cell.lblAmount.text = "+ $ "+((item?["amount"] as? String)!)
-            cell.lblAmount.textColor = .systemTeal
+            cell.lblAmount.text = "- $ "+((item?["amount"] as? String)!)
+            cell.lblAmount.textColor = .red
             
             // bank name
             cell.lblBankName.text = ((item?["type"] as? String)!)
@@ -378,15 +378,19 @@ extension AllTransaction: UITableViewDataSource
         // pushToPageTransactionDetails()
         
         let item = self.arr_list_of_all_transactions[indexPath.row] as? [String:Any]
+        print(item as Any)
         
-        let settingsVCId = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "TransactionDetailsId") as? TransactionDetails
-        settingsVCId!.dictGetClickedTransaction = item as NSDictionary?
+//        if (item!["type"] as! String) != "CASHOUT" {
+            let settingsVCId = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "TransactionDetailsId") as? TransactionDetails
+            settingsVCId!.dictGetClickedTransaction = item as NSDictionary?
+            
+            if (item!["type"] as! String) == "CardProcess" {
+                settingsVCId!.str_select_profile = "yes"
+            }
+            
+            self.navigationController?.pushViewController(settingsVCId!, animated: true)
+//        }
         
-        if (item!["type"] as! String) == "CardProcess" {
-            settingsVCId!.str_select_profile = "yes"
-        }
-        
-        self.navigationController?.pushViewController(settingsVCId!, animated: true)
         
     }
     

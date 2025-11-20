@@ -446,6 +446,7 @@ extension ManageCards: UITableViewDataSource
 
                                 CRNotifications.showNotification(type: CRNotifications.success, title: "Success!", message:strSuccessAlert, dismissDelay: 1.5, completion:{})
                                 
+                                   self.arr_list_of_all_cards.removeAllObjects()
                                 // ERProgressHud.sharedInstance.hide()
                                    self.manageCardList(pageNumber: 1)
                                 

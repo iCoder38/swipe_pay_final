@@ -208,7 +208,6 @@ class GetStartedNowNewRegistraiton: UIViewController,UITextFieldDelegate {
             let userName = defaults.string(forKey: "KeyLoginPersonal")
             
             if userName == "loginViaPersonal" {
-                
                 parameters = [
                     "action"        : "registration",
                     "email"         : String(cell.txtEmail.text!),
@@ -217,11 +216,10 @@ class GetStartedNowNewRegistraiton: UIViewController,UITextFieldDelegate {
                     "contactNumber" : String(cell.txtPhone.text!),
                     "deviceToken"   : String(myDeviceTokenIs),
                     "device"        : String("iOS"),
-                    "role"          : String("User")//"123456"
+                    "role"          : String("Member")
                 ]
             }
             else {
-                
                 parameters = [
                     "action"            : "registration",
                     "email"             : String(cell.txtEmail.text!),
@@ -230,7 +228,7 @@ class GetStartedNowNewRegistraiton: UIViewController,UITextFieldDelegate {
                     "contactNumber"     : String(cell.txtPhone.text!),
                     "deviceToken"       : String(myDeviceTokenIs),
                     "device"            : String("iOS"),
-                    "role"              : String("Vendor")//"123456"
+                    "role"              : String("Vendor")
                 ]
             }
             

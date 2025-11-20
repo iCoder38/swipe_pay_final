@@ -136,8 +136,6 @@ class TransactionDetails: UIViewController {
             self.view.backgroundColor = BUTTON_BACKGROUND_COLOR_BLUE
         }
         
-        
-        
         if self.str_select_profile == "yes" {
             self.btnBack.setImage(UIImage(systemName: "arrow.left"), for: .normal)
             self.btnBack.tintColor = .white
@@ -148,26 +146,17 @@ class TransactionDetails: UIViewController {
     @objc func backClickMethod() {
         self.navigationController?.popViewController(animated: true)
     }
+    
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
     
-    /*
-     [action] => sendmoney
-     [userId] => 39
-     [receiverId] => 51
-     [amount] => 1
-     */
-    
     //MARK:- ALL TRANSACTION DETAILS
     @objc func allTransactionsDetailsWB() {
-        // ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Please wait...")
-        
         
         let defaults = UserDefaults.standard
         let userName = defaults.string(forKey: "KeyLoginPersonal")
         if userName == "loginViaPersonal" {
-            // personal user
             ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Please wait...")
             
         }
@@ -179,30 +168,22 @@ class TransactionDetails: UIViewController {
         
         var parameters:Dictionary<AnyHashable, Any>!
         
-        // if let person = UserDefaults.standard.value(forKey: "keyLoginFullData") as? [String:Any]
-        // {
-        // let x : Int = (person["userId"] as! Int)
-        // let myString = String(x)
-        
         parameters = [
             "action"        : "transactiondetails",
             "transactionsId" : (dictGetClickedTransaction!["transactionsId"] as! Int)
         ]
-        // }
         
         print("parameters-------\(String(describing: parameters))")
         
-        Alamofire.request(urlString, method: .post, parameters: parameters as? Parameters).responseJSON
-        {
+        Alamofire.request(urlString, method: .post, parameters: parameters as? Parameters).responseJSON {
             response in
             
             switch(response.result) {
             case .success(_):
                 if let data = response.result.value {
                     
-                    
                     let JSON = data as! NSDictionary
-                    // print(JSON)
+                    print(JSON)
                     
                     var strSuccess : String!
                     strSuccess = JSON["status"]as Any as? String
@@ -210,13 +191,10 @@ class TransactionDetails: UIViewController {
                     var strSuccessAlert : String!
                     strSuccessAlert = JSON["msg"]as Any as? String
                     
-                    if strSuccess == "success" //true
-                    {
+                    if strSuccess == "success" {
+                        
                         self.dictServerValue = (JSON["data"] as! NSDictionary)
                         
-                        
-                        
-                        /*
                          /*
                           amount = 1;
                           bankName = "";
@@ -236,7 +214,6 @@ class TransactionDetails: UIViewController {
                           transactionsId = 00226;
                           type = ADD;
                           */
-                         */
                         
                         if (self.dictServerValue!["type"] as! String) == "ADD" {
                             
@@ -297,26 +274,6 @@ class TransactionDetails: UIViewController {
                                 
                             }
                             
-                            
-                            
-                            /*
-                             let livingArea = self.dictServerValue?["amount"] as? Int ?? 0
-                             if livingArea == 0 {
-                             let stringValue = String(livingArea)
-                             self.lblBusinessUserName.text = "$ "+stringValue
-                             }
-                             else
-                             {
-                             let stringValue = String(livingArea)
-                             self.lblBusinessUserName.text = "$ "+stringValue
-                             }
-                             */
-                            // business user name
-                            // self.lblBusinessUserName.text = (self.dictServerValue["receiverName"] as! String)
-                            
-                            // business phone
-                            // self.btnCall.setTitle((self.dictServerValue["receiverContactNumber"] as! String), for: .normal)
-                            
                             self.btnCall.setTitle("Paid to", for: .normal)
                             
                             // business email
@@ -324,6 +281,16 @@ class TransactionDetails: UIViewController {
                             
                             self.lblNavigationTitle.text = "Transaction Details"
                         }
+                        
+                        else if (self.dictServerValue!["type"] as! String) == "CASHOUT" {
+                            
+                            self.imgBusinessUserProfileImage.sd_setImage(with: URL(string: (self.dictServerValue["receiverImage"] as! String)), placeholderImage: UIImage(named: "plainBack"))
+                            self.lblBusinessUserName.text = "-$ \(self.dictServerValue["amount"]!)"
+                            self.btnCall.setTitle("CASHOUT", for: .normal)
+                            self.btnMail.setTitle((self.dictServerValue["senderEmail"] as! String), for: .normal)
+                            
+                        }
+                        
                         else if (self.dictServerValue!["type"] as! String) == "CardProcess" {
                             
                             self.btnCall.setTitle((self.dictServerValue["type"] as! String), for: .normal)
@@ -336,8 +303,9 @@ class TransactionDetails: UIViewController {
                             // business email
                             self.btnMail.setTitle((self.dictServerValue["receiverName"] as! String), for: .normal)
                             
-                            self.lblNavigationTitle.text = "Transaction Details"
+                             
                         }
+                        self.lblNavigationTitle.text = "Transaction Details"
                         
                         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.imageTapped(tapGestureRecognizer:)))
                         self.imgBusinessUserProfileImage.isUserInteractionEnabled = true
@@ -412,7 +380,7 @@ extension TransactionDetails: UITableViewDataSource
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
-        return 4
+        if (dictServerValue!["type"] as! String) == "CASHOUT" {return 3}else{return 4}
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
@@ -487,27 +455,7 @@ extension TransactionDetails: UITableViewDataSource
             
             if indexPath.row == 0 {
                 cell.lblHeader.text = "TRANSACTION ID"
-                // print(dictGetClickedTransaction!["transactionID"])
-                // print(type(of: dictGetClickedTransaction!["transactionID"]))
-                // cell.lblDynamicText.text = (dictServerValue!["transactionsId"] as! String)
-                
-                print(type(of: (dictServerValue!["transactionsId"])))
                 cell.lblDynamicText.text = (dictServerValue!["transactionsId"] as! String)
-                
-                /*
-                 let livingArea = dictServerValue?["transactionsId"] as? Int ?? 0
-                 if livingArea == 0 {
-                 let stringValue = String(livingArea)
-                 cell.lblDynamicText.text = stringValue
-                 }
-                 else
-                 {
-                 let stringValue = String(livingArea)
-                 cell.lblDynamicText.text = stringValue
-                 // cell.lblDynamicText.text = (dictServerValue!["transactionsId"] as! String)
-                 }
-                 */
-                
                 
             }
             if indexPath.row == 1 {
@@ -522,6 +470,27 @@ extension TransactionDetails: UITableViewDataSource
                 cell.lblHeader.text = "FROM BANK"
                 cell.lblDynamicText.text = ""
             }
+        } else if (dictServerValue!["type"] as! String) == "CASHOUT" {
+            
+            self.lblPaymentWillReflect.isHidden = false
+            
+            if indexPath.row == 0 {
+                cell.lblHeader.text = "TRANSACTION ID"
+                cell.lblDynamicText.text = (dictServerValue!["transactionsId"] as! String)
+                
+            }
+            if indexPath.row == 1 {
+                cell.lblHeader.text = "TO:\(dictServerValue!["senderName"] as! String)"
+                cell.lblDynamicText.text = (dictServerValue!["senderEmail"] as! String)
+            }
+            if indexPath.row == 2 {
+                cell.lblHeader.text = "PHONE NUMBER"
+                cell.lblDynamicText.text = (dictServerValue!["senderContactNumber"] as! String)
+            }
+//            if indexPath.row == 3 {
+//                cell.lblHeader.text = "FROM BANK"
+//                cell.lblDynamicText.text = ""
+//            }
         } else {
             
             self.lblPaymentWillReflect.isHidden = true
@@ -567,6 +536,8 @@ extension TransactionDetails: UITableViewDataSource
         if (dictServerValue!["type"] as! String) == "ADD" {
             return 80
         } else if (dictServerValue!["type"] as! String) == "SEND" {
+            return 80
+        } else if (dictServerValue!["type"] as! String) == "CASHOUT" {
             return 80
         } else {
             if indexPath.row == 0 {

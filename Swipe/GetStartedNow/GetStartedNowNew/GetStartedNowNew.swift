@@ -385,16 +385,16 @@ class GetStartedNowNew: UIViewController,UITextFieldDelegate {
                                 print(otpCheck as Any)
                                 
                                 if otpCheck == "" {
-                                    // not verified
                                     
                                     ERProgressHud.sharedInstance.hide()
                                     
                                     let settingsVCId = UIStoryboard.init(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "OTPId") as? OTP
-                                     settingsVCId!.getNumber = dict["contactNumber"] as Any as? String
+                                    
+                                    settingsVCId!.getNumber = dict["contactNumber"] as Any as? String
+                                    settingsVCId!.getEmail  = dict["email"] as Any as? String
+                                    
                                     self.present(settingsVCId!, animated: true, completion: nil)
-                                    
-                                    
-                                    
+
                                     
                                 } else if otpCheck == "YES" {
                                     //
