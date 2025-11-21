@@ -287,58 +287,58 @@ extension RequestMoneyUser: UITableViewDataSource
         cell.backgroundColor = .white
         
         
-         let item = arrListOfAllTransaction[indexPath.row] as? [String:Any]
-         print(item as Any)
-       
+        let item = arrListOfAllTransaction[indexPath.row] as? [String:Any]
+        print(item as Any)
         
-            // receive
-            let contact = self.arrListOfAllTransaction[indexPath.row]
-            let fbemail = ((contact as AnyObject)["userName"]! as? String ?? "")+" - $ "+((contact as AnyObject)["amount"]! as? String ?? "")
-            cell.PersonNameLabel.text = fbemail
-            
-            let imagee = ((contact as AnyObject)["userImage"]! as? String ?? "")
-            
-            cell.PersonImage.sd_setImage(with: URL(string: imagee), placeholderImage: UIImage(named: "avatar")) // my profile image
-            
-            let phoneNumberIs = ((contact as AnyObject)["contactNumber"]! as? String ?? "")
-            cell.PersonMobileNOLabel.text = phoneNumberIs
-            
-            
-            cell.imgs.image = UIImage(named:"rightArrow")
-            cell.imgs.isHidden = true
-            
-            
-            // 1 : pending
-            // 2 : send
-            // 3 : decline
-            
-            let x : Int = (contact as AnyObject)["status"]! as! Int
-            let amountIs = String(x)
-            if amountIs == "1" {
-                cell.statusLabel.isHidden = false
-                cell.statusLabel.text = "pending..."
-                cell.statusLabel.textColor = .white
-                cell.statusLabel.backgroundColor = .systemGray
-                cell.statusLabel.layer.cornerRadius = 2
-                cell.statusLabel.clipsToBounds = true
-            } else if amountIs == "2" {
-                cell.statusLabel.isHidden = false
-                cell.statusLabel.text = "accepted"
-                cell.statusLabel.textColor = .white
-                cell.statusLabel.backgroundColor = .systemGreen
-                cell.statusLabel.layer.cornerRadius = 2
-                cell.statusLabel.clipsToBounds = true
-            } else if amountIs == "3" {
-                cell.statusLabel.isHidden = false
-                cell.statusLabel.text = "decline"
-                cell.statusLabel.textColor = .white
-                cell.statusLabel.backgroundColor = .systemRed
-                cell.statusLabel.layer.cornerRadius = 2
-                cell.statusLabel.clipsToBounds = true
-            } else {
-                cell.statusLabel.isHidden = true
-            }
-            
+        
+        // receive
+        let contact = self.arrListOfAllTransaction[indexPath.row]
+        let fbemail = ((contact as AnyObject)["userName"]! as? String ?? "")+" - $ "+((contact as AnyObject)["amount"]! as? String ?? "")
+        cell.PersonNameLabel.text = fbemail
+        
+        let imagee = ((contact as AnyObject)["userImage"]! as? String ?? "")
+        
+        cell.PersonImage.sd_setImage(with: URL(string: imagee), placeholderImage: UIImage(named: "avatar")) // my profile image
+        
+        let phoneNumberIs = ((contact as AnyObject)["contactNumber"]! as? String ?? "")
+        cell.PersonMobileNOLabel.text = phoneNumberIs
+        
+        
+        cell.imgs.image = UIImage(named:"rightArrow")
+        cell.imgs.isHidden = true
+        
+        
+        // 1 : pending
+        // 2 : send
+        // 3 : decline
+        
+        let x : Int = (contact as AnyObject)["status"]! as! Int
+        let amountIs = String(x)
+        if amountIs == "1" {
+            cell.statusLabel.isHidden = false
+            cell.statusLabel.text = "pending..."
+            cell.statusLabel.textColor = .white
+            cell.statusLabel.backgroundColor = .systemGray
+            cell.statusLabel.layer.cornerRadius = 2
+            cell.statusLabel.clipsToBounds = true
+        } else if amountIs == "2" {
+            cell.statusLabel.isHidden = false
+            cell.statusLabel.text = "accepted"
+            cell.statusLabel.textColor = .white
+            cell.statusLabel.backgroundColor = .systemGreen
+            cell.statusLabel.layer.cornerRadius = 2
+            cell.statusLabel.clipsToBounds = true
+        } else if amountIs == "3" {
+            cell.statusLabel.isHidden = false
+            cell.statusLabel.text = "decline"
+            cell.statusLabel.textColor = .white
+            cell.statusLabel.backgroundColor = .systemRed
+            cell.statusLabel.layer.cornerRadius = 2
+            cell.statusLabel.clipsToBounds = true
+        } else {
+            cell.statusLabel.isHidden = true
+        }
+        
         
         return cell
     }
@@ -353,292 +353,355 @@ extension RequestMoneyUser: UITableViewDataSource
         // dictGetClickedTransaction
         // pushToPageTransactionDetails()
         
-         // let item = arrListOfAllTransaction[indexPath.row] as? [String:Any]
+        // let item = arrListOfAllTransaction[indexPath.row] as? [String:Any]
         
-            let contact2 = self.arrListOfAllTransaction[indexPath.row]
+        let contact2 = self.arrListOfAllTransaction[indexPath.row]
+        print(contact2 as Any)
+        
+        /*
+         amount = "2.55";
+         contactNumber = 6598655894;
+         created = "Mar 17th, 2020, 1:26 pm";
+         message = t;
+         requestFrom = 75;
+         requestId = 18;
+         requestTo = 208;
+         status = 1;
+         userId = 208;
+         userImage = "";
+         userName = gegge;
+         */
+        
+        //if searchArrayStr == "9" {
+        let x2 : Int = (contact2 as AnyObject)["status"]! as! Int
+        let amountIs2 = String(x2)
+        if amountIs2 == "1" {
+            let finalAmountIs:String!
+            let amountIs = ((contact2 as AnyObject)["amount"]! as? String ?? "")
+            if amountIs == "" {
+                let x : Int = (contact2 as AnyObject)["amount"]! as! Int
+                let amountIs = String(x)
+                finalAmountIs = amountIs
+            } else {
+                finalAmountIs = amountIs
+            }
+            
+            let requestedAt = "Requested: "+((contact2 as AnyObject)["created"]! as? String ?? "")
+            let username = "name: "+((contact2 as AnyObject)["userName"]! as? String ?? "")
+            let messageAt = ((contact2 as AnyObject)["message"]! as? String ?? "")
+            
+            var strMessagee:String!
+            
+            if messageAt == "" {
+                strMessagee = ""
+            } else {
+                strMessagee = "says: "+"'"+messageAt+"'"
+            }
+            
+            let alert = UIAlertController(title: "$ "+finalAmountIs, message: ""+requestedAt+"\n"+username+"\n"+strMessagee,         preferredStyle: UIAlertController.Style.alert)
+            
+            
+            
+            alert.addAction(UIAlertAction(title: "Pay",
+                                          style: UIAlertAction.Style.default,
+                                          handler: {(_: UIAlertAction!) in
+                //Sign out action
+                
+                let x : Int = (contact2 as AnyObject)["requestId"]! as! Int
+                let REQUESTID = String(x)
+                
+                // self.sendMoney(amount: <#T##String#>, receiverId: <#T##String#>)
+                
+            }))
+            alert.addAction(UIAlertAction(title: "Decline",
+                                          style: UIAlertAction.Style.destructive,
+                                          handler: {(_: UIAlertAction!) in
+                //Sign out action
+                let x : Int = (contact2 as AnyObject)["requestId"]! as! Int
+                let REQUESTID = String(x)
+                self.payOrDeclineWB(strRequestId: REQUESTID, strStatus: "3")
+            }))
+            alert.addAction(UIAlertAction(title: "Dismiss",
+                                          style: UIAlertAction.Style.cancel,
+                                          handler: {(_: UIAlertAction!) in
+                //Sign out action
+                
+            }))
+            
+            self.present(alert, animated: true, completion: nil)
+        } else if amountIs2 == "2" {
+            let finalAmountIs:String!
+            let sentMessage = "You already sent money"
+            let amountIs = ((contact2 as AnyObject)["amount"]! as? String ?? "")
+            if amountIs == "" {
+                let x : Int = (contact2 as AnyObject)["amount"]! as! Int
+                let amountIs = String(x)
+                finalAmountIs = "$ "+amountIs
+            } else {
+                finalAmountIs = "$ "+amountIs
+            }
+            
+            let requestedAt = "Requested: "+((contact2 as AnyObject)["created"]! as? String ?? "")
+            let username = "name: "+((contact2 as AnyObject)["userName"]! as? String ?? "")
+            let messageAt = ((contact2 as AnyObject)["message"]! as? String ?? "")
+            
+            var strMessagee:String!
+            
+            if messageAt == "" {
+                strMessagee = ""
+            } else {
+                strMessagee = "says: "+"'"+messageAt+"'"
+            }
+            
+            let alert = UIAlertController(title:sentMessage , message: finalAmountIs+"\n"+requestedAt+"\n"+username+"\n"+strMessagee,         preferredStyle: UIAlertController.Style.alert)
+            
+            
+            
+            alert.addAction(UIAlertAction(title: "Already accepted",
+                                          style: UIAlertAction.Style.default,
+                                          handler: {(_: UIAlertAction!) in
+                //Sign out action
+                
+                
+            }))
+            
+            
+            self.present(alert, animated: true, completion: nil)
+        } else if amountIs2 == "3" {
+            let finalAmountIs:String!
+            let sentMessage = "You declined the request"
+            let amountIs = ((contact2 as AnyObject)["amount"]! as? String ?? "")
+            if amountIs == "" {
+                let x : Int = (contact2 as AnyObject)["amount"]! as! Int
+                let amountIs = String(x)
+                finalAmountIs = "$ "+amountIs
+            } else {
+                finalAmountIs = "$ "+amountIs
+            }
+            
+            let requestedAt = "Requested: "+((contact2 as AnyObject)["created"]! as? String ?? "")
+            let username = "name: "+((contact2 as AnyObject)["userName"]! as? String ?? "")
+            let messageAt = ((contact2 as AnyObject)["message"]! as? String ?? "")
+            
+            var strMessagee:String!
+            
+            if messageAt == "" {
+                strMessagee = ""
+            } else {
+                strMessagee = "says: "+"'"+messageAt+"'"
+            }
+            
+            let alert = UIAlertController(title:sentMessage , message: finalAmountIs+"\n"+requestedAt+"\n"+username+"\n"+strMessagee,         preferredStyle: UIAlertController.Style.alert)
+            
+            
+            
+            alert.addAction(UIAlertAction(title: "Declined",
+                                          style: UIAlertAction.Style.destructive,
+                                          handler: {(_: UIAlertAction!) in
+                //Sign out action
+                
+                
+            }))
+            
+            
+            self.present(alert, animated: true, completion: nil)
+        } else {
+            
+        }
+       
+    }
+    
+    //MARK:- SEND MONEY
+    @objc func sendMoney(amount:String,receiverId:String) {
+        // ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Please wait...")
+        let defaults = UserDefaults.standard
+        let userName = defaults.string(forKey: "KeyLoginPersonal")
+        if userName == "loginViaPersonal" {
+            // personal user
+            ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Please wait...")
+        }
+        else {
+            ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Please wait...")
+        }
+        
+        let urlString = BASE_URL_SWIIPE
+        
+        var parameters:Dictionary<AnyHashable, Any>!
+        
+        
+        if let person = UserDefaults.standard.value(forKey: "keyLoginFullData") as? [String:Any] {
+            let x : Int = (person["userId"] as! Int)
+            let myString = String(x)
             
             /*
-             amount = "2.55";
-             contactNumber = 6598655894;
-             created = "Mar 17th, 2020, 1:26 pm";
-             message = t;
-             requestFrom = 75;
-             requestId = 18;
-             requestTo = 208;
-             status = 1;
-             userId = 208;
-             userImage = "";
-             userName = gegge;
+             action=sendmoney&userId=554&receiverId=551&amount=69
              */
             
-            //if searchArrayStr == "9" {
-                let x2 : Int = (contact2 as AnyObject)["status"]! as! Int
-                let amountIs2 = String(x2)
-                if amountIs2 == "1" {
-                    let finalAmountIs:String!
-                         let amountIs = ((contact2 as AnyObject)["amount"]! as? String ?? "")
-                        if amountIs == "" {
-                            let x : Int = (contact2 as AnyObject)["amount"]! as! Int
-                            let amountIs = String(x)
-                            finalAmountIs = amountIs
-                         } else {
-                            finalAmountIs = amountIs
-                        }
-                        
-                        let requestedAt = "Requested: "+((contact2 as AnyObject)["created"]! as? String ?? "")
-                        let username = "name: "+((contact2 as AnyObject)["userName"]! as? String ?? "")
-                        let messageAt = ((contact2 as AnyObject)["message"]! as? String ?? "")
-                        
-                        var strMessagee:String!
-                        
-                        if messageAt == "" {
-                            strMessagee = ""
-                        } else {
-                            strMessagee = "says: "+"'"+messageAt+"'"
-                        }
-                        
-                        let alert = UIAlertController(title: "$ "+finalAmountIs, message: ""+requestedAt+"\n"+username+"\n"+strMessagee,         preferredStyle: UIAlertController.Style.alert)
-
+            parameters = [
+                "action"        : "sendmoney",
+                "userId"        : String(myString),
+                "receiverId"    : String(receiverId),
+                "amount"        : String(amount)
+            ]
+        }
+        
+        print("parameters-------\(String(describing: parameters))")
+        
+        Alamofire.request(urlString, method: .post, parameters: parameters as? Parameters).responseJSON {
+            response in
+            
+            switch(response.result) {
+            case .success(_):
+                if let data = response.result.value {
                     
                     
-                    alert.addAction(UIAlertAction(title: "Pay",
-                                                      style: UIAlertAction.Style.default,
-                                                      handler: {(_: UIAlertAction!) in
-                                                        //Sign out action
-                                                        
-                                                        let x : Int = (contact2 as AnyObject)["requestId"]! as! Int
-                                                        let REQUESTID = String(x)
-                                                        self.payOrDeclineWB(strRequestId: REQUESTID, strStatus: "2")
-                    }))
-                    alert.addAction(UIAlertAction(title: "Decline",
-                                                          style: UIAlertAction.Style.destructive,
-                                                          handler: {(_: UIAlertAction!) in
-                                                            //Sign out action
-                                                            let x : Int = (contact2 as AnyObject)["requestId"]! as! Int
-                                                            let REQUESTID = String(x)
-                                                            self.payOrDeclineWB(strRequestId: REQUESTID, strStatus: "3")
-                    }))
-                        alert.addAction(UIAlertAction(title: "Dismiss",
-                                                          style: UIAlertAction.Style.cancel,
-                                                          handler: {(_: UIAlertAction!) in
-                                                            //Sign out action
-                                                            
-                        }))
-                    
-                    self.present(alert, animated: true, completion: nil)
-                } else if amountIs2 == "2" {
-                    let finalAmountIs:String!
-                    let sentMessage = "You already sent money"
-                         let amountIs = ((contact2 as AnyObject)["amount"]! as? String ?? "")
-                        if amountIs == "" {
-                            let x : Int = (contact2 as AnyObject)["amount"]! as! Int
-                            let amountIs = String(x)
-                            finalAmountIs = "$ "+amountIs
-                         } else {
-                            finalAmountIs = "$ "+amountIs
-                        }
-                        
-                        let requestedAt = "Requested: "+((contact2 as AnyObject)["created"]! as? String ?? "")
-                        let username = "name: "+((contact2 as AnyObject)["userName"]! as? String ?? "")
-                        let messageAt = ((contact2 as AnyObject)["message"]! as? String ?? "")
-                        
-                        var strMessagee:String!
-                        
-                        if messageAt == "" {
-                            strMessagee = ""
-                        } else {
-                            strMessagee = "says: "+"'"+messageAt+"'"
-                        }
-                        
-                        let alert = UIAlertController(title:sentMessage , message: finalAmountIs+"\n"+requestedAt+"\n"+username+"\n"+strMessagee,         preferredStyle: UIAlertController.Style.alert)
-
+                    let JSON = data as! NSDictionary
+                    print(JSON)
                     
                     
-                    alert.addAction(UIAlertAction(title: "Already accepted",
-                                                      style: UIAlertAction.Style.default,
-                                                      handler: {(_: UIAlertAction!) in
-                                                        //Sign out action
-                                                        
-                                                        
-                    }))
-                   
-                        
-                    self.present(alert, animated: true, completion: nil)
-                } else if amountIs2 == "3" {
-                    let finalAmountIs:String!
-                     let sentMessage = "You declined the request"
-                          let amountIs = ((contact2 as AnyObject)["amount"]! as? String ?? "")
-                         if amountIs == "" {
-                             let x : Int = (contact2 as AnyObject)["amount"]! as! Int
-                             let amountIs = String(x)
-                             finalAmountIs = "$ "+amountIs
-                          } else {
-                             finalAmountIs = "$ "+amountIs
-                         }
-                         
-                         let requestedAt = "Requested: "+((contact2 as AnyObject)["created"]! as? String ?? "")
-                         let username = "name: "+((contact2 as AnyObject)["userName"]! as? String ?? "")
-                         let messageAt = ((contact2 as AnyObject)["message"]! as? String ?? "")
-                         
-                         var strMessagee:String!
-                         
-                         if messageAt == "" {
-                             strMessagee = ""
-                         } else {
-                             strMessagee = "says: "+"'"+messageAt+"'"
-                         }
-                         
-                         let alert = UIAlertController(title:sentMessage , message: finalAmountIs+"\n"+requestedAt+"\n"+username+"\n"+strMessagee,         preferredStyle: UIAlertController.Style.alert)
-
-                     
-                     
-                     alert.addAction(UIAlertAction(title: "Declined",
-                                                       style: UIAlertAction.Style.destructive,
-                                                       handler: {(_: UIAlertAction!) in
-                                                         //Sign out action
-                                                         
-                                                         
-                     }))
+                    var strSuccess : String!
+                    strSuccess = JSON["status"]as Any as? String
                     
-                         
-                     self.present(alert, animated: true, completion: nil)
-                } else {
+                    var strSuccessAlert : String!
+                    strSuccessAlert = JSON["msg"]as Any as? String
+                    
+                    if strSuccess == "success" {
+                        ERProgressHud.sharedInstance.hide()
+                        
+//                        self.payOrDeclineWB(strRequestId: REQUESTID, strStatus: "2")
+                        // self.usersListWBForSendOrReceive(strSendOrReceive: "RECEIVE", strForCell: "9")
+                        
+                    }
+                    else {
+                        // self.indicator.stopAnimating()
+                        // self.enableService()
+                        CRNotifications.showNotification(type: CRNotifications.error, title: "Error!", message:strSuccessAlert, dismissDelay: 1.5, completion:{})
+                        ERProgressHud.sharedInstance.hide()
+                    }
                     
                 }
                 
+            case .failure(_):
+                print("Error message:\(String(describing: response.result.error))")
+                // self.indicator.stopAnimating()
+                // self.enableService()
+                ERProgressHud.sharedInstance.hide()
                 
-            //} // here
-        
-         
-        
+                let alertController = UIAlertController(title: nil, message: SERVER_ISSUE_MESSAGE_ONE+"\n"+SERVER_ISSUE_MESSAGE_TWO, preferredStyle: .actionSheet)
+                
+                let okAction = UIAlertAction(title: "OK", style: UIAlertAction.Style.default) {
+                    UIAlertAction in
+                    NSLog("OK Pressed")
+                }
+                
+                alertController.addAction(okAction)
+                
+                self.present(alertController, animated: true, completion: nil)
+                
+                break
+            }
+        }
     }
     
-     //MARK:- USERS LIST
-     @objc func payOrDeclineWB(strRequestId:String,strStatus:String) {
-         // ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Please wait...")
-         
-         let defaults = UserDefaults.standard
-         let userName = defaults.string(forKey: "KeyLoginPersonal")
-         if userName == "loginViaPersonal" {
-             // personal user
-              ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Please wait...")
-             
-         }
-         else {
-              ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Please wait...")
-         }
+    
+    @objc func payOrDeclineWB(strRequestId:String,strStatus:String) {
+        // ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Please wait...")
+        
+        let defaults = UserDefaults.standard
+        let userName = defaults.string(forKey: "KeyLoginPersonal")
+        if userName == "loginViaPersonal" {
+            // personal user
+            ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Please wait...")
             
-         let urlString = BASE_URL_SWIIPE
-                
-         var parameters:Dictionary<AnyHashable, Any>!
-            
-          if let person = UserDefaults.standard.value(forKey: "keyLoginFullData") as? [String:Any] {
-              let x : Int = (person["userId"] as! Int)
-              let myString = String(x)
-             
-             /*
-              action: updaterequest
-              requestId:
-              userId:
-              status:  1=Request/ 2=send/ 3=DECLINE
-              */
-             
-                 parameters = [
-                     "action"         : "updaterequest",
-                     "userId"         : String(myString),
-                     "requestId"      : String(strRequestId),
-                     "status"         : String(strStatus)
-                 ]
-          }
-                 
-                    print("parameters-------\(String(describing: parameters))")
-                    
-                    Alamofire.request(urlString, method: .post, parameters: parameters as? Parameters).responseJSON
-                        {
-                            response in
-                
-                            switch(response.result) {
-                            case .success(_):
-                               if let data = response.result.value {
-
-                                
-                                let JSON = data as! NSDictionary
-                                 print(JSON)
-                                 
-                                
-                                var strSuccess : String!
-                                strSuccess = JSON["status"]as Any as? String
-                                
-                                var strSuccessAlert : String!
-                                strSuccessAlert = JSON["msg"]as Any as? String
-                                
-                                if strSuccess == "success" //true
-                                {
-                                 ERProgressHud.sharedInstance.hide()
-                                 
-                                 // let defaults = UserDefaults.standard
-                                 
-                                 
-                                  // var ar : NSArray!
-                                  // ar = (JSON["data"] as! Array<Any>) as NSArray
-                                  // self.arrListOfUsers = (ar as! Array<Any>)
-                                 
-                                 // print(self.arrListOfUsers as Any)
-                                 
-                                 
-                                 
-                                 
-                                 
-                                 
-                                self.usersListWBForSendOrReceive(strSendOrReceive: "RECEIVE", strForCell: "9")
-                                 
-                                 
-                                 
-                                 
-                                 
-                                 
-                                 
-                                 
-                                 // self.tbleView.delegate = self
-                                 // self.tbleView.dataSource = self
-                                 // self.tbleView.reloadData()
-                 
-                                 
-                                }
-                                else
-                                {
-                                    // self.indicator.stopAnimating()
-                                    // self.enableService()
-                                 CRNotifications.showNotification(type: CRNotifications.error, title: "Error!", message:strSuccessAlert, dismissDelay: 1.5, completion:{})
-                                    ERProgressHud.sharedInstance.hide()
-                                }
-                                
-                            }
-
-                            case .failure(_):
-                                print("Error message:\(String(describing: response.result.error))")
-                                // self.indicator.stopAnimating()
-                                // self.enableService()
-                                ERProgressHud.sharedInstance.hide()
-                                
-                                let alertController = UIAlertController(title: nil, message: SERVER_ISSUE_MESSAGE_ONE+"\n"+SERVER_ISSUE_MESSAGE_TWO, preferredStyle: .actionSheet)
-                                
-                                let okAction = UIAlertAction(title: "OK", style: UIAlertAction.Style.default) {
-                                        UIAlertAction in
-                                        NSLog("OK Pressed")
-                                    }
-                                
-                                alertController.addAction(okAction)
-                                
-                                self.present(alertController, animated: true, completion: nil)
-                                
-                                break
-                             }
-                        }
-         
-         
-     
         }
+        else {
+            ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Please wait...")
+        }
+        
+        let urlString = BASE_URL_SWIIPE
+        
+        var parameters:Dictionary<AnyHashable, Any>!
+        
+        if let person = UserDefaults.standard.value(forKey: "keyLoginFullData") as? [String:Any] {
+            let x : Int = (person["userId"] as! Int)
+            let myString = String(x)
+            
+            /*
+             action: updaterequest
+             requestId:
+             userId:
+             status:  1=Request/ 2=send/ 3=DECLINE
+             */
+            
+            parameters = [
+                "action"        : "updaterequest",
+                "userId"        : String(myString),
+                "requestId"     : String(strRequestId),
+                "status"        : String(strStatus)
+            ]
+        }
+        
+        print("parameters-------\(String(describing: parameters))")
+        
+        Alamofire.request(urlString, method: .post, parameters: parameters as? Parameters).responseJSON {
+            response in
+            
+            switch(response.result) {
+            case .success(_):
+                if let data = response.result.value {
+                    
+                    
+                    let JSON = data as! NSDictionary
+                    print(JSON)
+                    
+                    
+                    var strSuccess : String!
+                    strSuccess = JSON["status"]as Any as? String
+                    
+                    var strSuccessAlert : String!
+                    strSuccessAlert = JSON["msg"]as Any as? String
+                    
+                    if strSuccess == "success" {
+                        ERProgressHud.sharedInstance.hide()
+                        
+                        self.usersListWBForSendOrReceive(strSendOrReceive: "RECEIVE", strForCell: "9")
+                        
+                    }
+                    else {
+                        // self.indicator.stopAnimating()
+                        // self.enableService()
+                        CRNotifications.showNotification(type: CRNotifications.error, title: "Error!", message:strSuccessAlert, dismissDelay: 1.5, completion:{})
+                        ERProgressHud.sharedInstance.hide()
+                    }
+                    
+                }
+                
+            case .failure(_):
+                print("Error message:\(String(describing: response.result.error))")
+                // self.indicator.stopAnimating()
+                // self.enableService()
+                ERProgressHud.sharedInstance.hide()
+                
+                let alertController = UIAlertController(title: nil, message: SERVER_ISSUE_MESSAGE_ONE+"\n"+SERVER_ISSUE_MESSAGE_TWO, preferredStyle: .actionSheet)
+                
+                let okAction = UIAlertAction(title: "OK", style: UIAlertAction.Style.default) {
+                    UIAlertAction in
+                    NSLog("OK Pressed")
+                }
+                
+                alertController.addAction(okAction)
+                
+                self.present(alertController, animated: true, completion: nil)
+                
+                break
+            }
+        }
+    }
+    
+    
+    
+    
+    
     
 }
 

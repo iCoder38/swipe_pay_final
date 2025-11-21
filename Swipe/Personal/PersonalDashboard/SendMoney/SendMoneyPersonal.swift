@@ -547,8 +547,227 @@ class SendMoneyPersonal: UIViewController,MFMessageComposeViewControllerDelegate
         
     }
     
+    
+    
+    func sendMoneyWB(requestFrom: String,requestTo: String, amount: String, requestId: String) {
+        ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Please wait...")
+        
+        guard let person = UserDefaults.standard.value(forKey: "keyLoginFullData") as? [String:Any],
+              let userId = person["userId"] as? Int else { return }
+        
+        let params: [String: Any] = [
+            "action"    : "sendmoney",
+            "userId"    : "\(requestTo)",
+            "receiverId": "\(requestFrom)",
+            "amount"    : amount
+        ]
+        
+        print(params as Any)
+        
+        callAPI(url: BASE_URL_SWIIPE, params: params) { success, response in
+            print(response as Any)
+            
+            if success {
+                
+                let defaults = UserDefaults.standard
+                let userName = defaults.string(forKey: "KeyLoginPersonal")
+                
+                if userName == "loginViaPersonal" {
+                    self.payOrDeclineWB(strRequestId: "\(requestId)", strStatus: "2")
+                } else {
+                    self.usersListWBForSendOrReceive(
+                        pageNumber: 1,
+                        strSendOrReceive: "SEND",
+                        strForCell: "8"
+                    )
+                }
+            }
+        }
+    }
+    
+    // UPDATE
+    func payOrDeclineWB(strRequestId: String, strStatus: String) {
+        guard let person = UserDefaults.standard.value(forKey: "keyLoginFullData") as? [String:Any],
+              let userId = person["userId"] as? Int else { return }
+        
+        let params: [String: Any] = [
+            "action"    : "updaterequest",
+            "userId"    : "\(userId)",
+            "requestId" : "\(strRequestId)",
+            "status"    : strStatus
+        ]
+        
+        print(params as Any)
+        
+        callAPI(url: BASE_URL_SWIIPE, params: params) { success, response in
+            print(response as Any)
+            
+            if success {
+                self.profileWB()
+            }
+        }
+    }
+    
+    
+    // PROFILE TO UPDATE WALLET
+    func profileWB() {
+        guard let person = UserDefaults.standard.value(forKey: "keyLoginFullData") as? [String:Any],
+              let userId = person["userId"] as? Int else { return }
+        
+        let params: [String: Any] = [
+            "action"    : "profile",
+            "userId"    : "\(userId)",
+            
+        ]
+        
+        print(params as Any)
+        
+        callAPI(url: BASE_URL_SWIIPE, params: params) { success, response in
+            print(response as Any)
+            
+            if success {
+                if let json = response {
+                    
+                    // 👇 exactly yehi save karna hai
+                    if let dict = json["data"] as? [AnyHashable : Any] {
+                        let defaults = UserDefaults.standard
+                        defaults.setValue(dict, forKey: "keyLoginFullData")
+                        print("✅ Saved user data:", dict)
+                        
+                        
+                        
+                        self.page = 1
+                        self.arr_list_of_send_receive.removeAllObjects()
+                        self.usersListWBForSendOrReceive(pageNumber: 1, strSendOrReceive: "RECEIVE", strForCell: "9")
+                        
+                    } else {
+                        print("❌ 'data' key not found in JSON")
+                    }
+                    
+                }
+                
+            }
+        }
+    }
+    
+    
+    
+    
+    
+
+    
+    
+    // MARK:- SEND MONEY
+    @objc func sendMoneyWB2(requestId:String,receiverId:String,amount:String) {
+        // ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Please wait...")
+        
+        let defaults = UserDefaults.standard
+        let userName = defaults.string(forKey: "KeyLoginPersonal")
+        if userName == "loginViaPersonal" {
+            // personal user
+            ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Please wait...")
+            
+        }
+        else {
+            ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Please wait...")
+        }
+        
+        let urlString = BASE_URL_SWIIPE
+        
+        var parameters:Dictionary<AnyHashable, Any>!
+        
+        if let person = UserDefaults.standard.value(forKey: "keyLoginFullData") as? [String:Any]
+        {
+            let x : Int = (person["userId"] as! Int)
+            let myString = String(x)
+            
+            /*
+             action=sendmoney&userId=554&receiverId=551&amount=69
+             */
+            
+            parameters = [
+                "action"         : "sendmoney",
+                "userId"         : String(myString),
+                "receiverId"        : String(receiverId),
+                "amount"         : String(amount)
+            ]
+        }
+        
+        print("parameters-------\(String(describing: parameters))")
+        
+        Alamofire.request(urlString, method: .post, parameters: parameters as? Parameters).responseJSON
+        {
+            response in
+            
+            switch(response.result) {
+            case .success(_):
+                if let data = response.result.value {
+                    
+                    
+                    let JSON = data as! NSDictionary
+                    print(JSON)
+                    
+                    
+                    var strSuccess : String!
+                    strSuccess = JSON["status"]as Any as? String
+                    
+                    var strSuccessAlert : String!
+                    strSuccessAlert = JSON["msg"]as Any as? String
+                    
+                    if strSuccess == "success" //true
+                    {
+                        
+                        if userName == "loginViaPersonal" {
+                            self.payOrDeclineWB(strRequestId: String(requestId), strStatus: "2")
+                            
+                        }
+                        else {
+                            self.usersListWBForSendOrReceive(pageNumber: 1, strSendOrReceive: "SEND", strForCell: "8")
+                        }
+                        
+//                        ERProgressHud.sharedInstance.hide()
+                        
+                        
+                          
+                        
+                    }
+                    else
+                    {
+                        // self.indicator.stopAnimating()
+                        // self.enableService()
+                        CRNotifications.showNotification(type: CRNotifications.error, title: "Error!", message:strSuccessAlert, dismissDelay: 1.5, completion:{})
+                        ERProgressHud.sharedInstance.hide()
+                    }
+                    
+                }
+                
+            case .failure(_):
+                print("Error message:\(String(describing: response.result.error))")
+                // self.indicator.stopAnimating()
+                // self.enableService()
+                ERProgressHud.sharedInstance.hide()
+                
+                let alertController = UIAlertController(title: nil, message: SERVER_ISSUE_MESSAGE_ONE+"\n"+SERVER_ISSUE_MESSAGE_TWO, preferredStyle: .actionSheet)
+                
+                let okAction = UIAlertAction(title: "OK", style: UIAlertAction.Style.default) {
+                    UIAlertAction in
+                    NSLog("OK Pressed")
+                }
+                
+                alertController.addAction(okAction)
+                
+                self.present(alertController, animated: true, completion: nil)
+                
+                break
+            }
+        }
+        
+        
+        
+    }
+    
     //MARK:- USERS LIST
-    @objc func payOrDeclineWB(strRequestId:String,strStatus:String) {
+    @objc func payOrDeclineWB2(strRequestId:String,strStatus:String) {
         // ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Please wait...")
         
         let defaults = UserDefaults.standard
@@ -607,38 +826,12 @@ class SendMoneyPersonal: UIViewController,MFMessageComposeViewControllerDelegate
                     var strSuccessAlert : String!
                     strSuccessAlert = JSON["msg"]as Any as? String
                     
-                    if strSuccess == "success" //true
+                    if strSuccess == "success"
                     {
                         ERProgressHud.sharedInstance.hide()
                         
-                        // let defaults = UserDefaults.standard
-                        
-                        
-                        // var ar : NSArray!
-                        // ar = (JSON["data"] as! Array<Any>) as NSArray
-                        // self.arrListOfUsers = (ar as! Array<Any>)
-                        
-                        // print(self.arrListOfUsers as Any)
-                        
-                        
-                        
-                        
-                        
-                        
                         self.usersListWBForSendOrReceive(pageNumber: 1, strSendOrReceive: "SEND", strForCell: "8")
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        // self.tbleView.delegate = self
-                        // self.tbleView.dataSource = self
-                        // self.tbleView.reloadData()
-                        
-                        
+                          
                     }
                     else
                     {
@@ -772,6 +965,7 @@ class SendMoneyPersonal: UIViewController,MFMessageComposeViewControllerDelegate
              [userId] => 74
              [pageNo] => 0
              */
+            
             parameters = [
                 "action"         : "userlist",
                 "userId"         : String(myString),
@@ -910,11 +1104,10 @@ class SendMoneyPersonal: UIViewController,MFMessageComposeViewControllerDelegate
             let x : Int = (person["userId"] as! Int)
             let myString = String(x)
             
-            /*
-             [action] => userlist
-             [userId] => 74
-             [pageNo] => 0
-             */
+            let y : Double = person["wallet"] as! Double
+            let foo = y.rounded(digits: 2)
+            self.lblTotalAmountInWallet.text = "$ "+"\(foo)" 
+            
             parameters = [
                 "action"         : "paymentrequestlist",
                 "userId"         : String(myString),
@@ -1306,18 +1499,20 @@ class SendMoneyPersonal: UIViewController,MFMessageComposeViewControllerDelegate
                 } else if segmentControls.selectedSegmentIndex == 2 {
                     let contact2 = self.arr_list_of_send_receive[indexPath.row]
                     
+                    print(contact2)
+                    
                     /*
-                     amount = "2.55";
-                     contactNumber = 6598655894;
-                     created = "Mar 17th, 2020, 1:26 pm";
-                     message = t;
-                     requestFrom = 75;
-                     requestId = 18;
-                     requestTo = 208;
+                     amount = 29;
+                     contactNumber = 7845123252;
+                     created = "Nov 21st, 2025, 1:54 pm";
+                     message = "";
+                     requestFrom = 551;
+                     requestId = 117;
+                     requestTo = 554;
                      status = 1;
-                     userId = 208;
-                     userImage = "";
-                     userName = gegge;
+                     userId = 551;
+                     userImage = "https://appswiipepay.evirtualservices.net/site/img/uploads/users/1763620691images-2023-02-10T111610.290.jpeg";
+                     userName = android;
                      */
                     
                     if searchArrayStr == "9" {
@@ -1357,7 +1552,19 @@ class SendMoneyPersonal: UIViewController,MFMessageComposeViewControllerDelegate
                                 
                                 let x : Int = (contact2 as AnyObject)["requestId"]! as! Int
                                 let REQUESTID = String(x)
-                                self.payOrDeclineWB(strRequestId: REQUESTID, strStatus: "2")
+                                
+                                let to : Int = (contact2 as AnyObject)["requestTo"]! as! Int
+                                let TO = String(to)
+                                
+                                let from : Int = (contact2 as AnyObject)["requestFrom"]! as! Int
+                                let FROM = String(from)
+                                
+                                self.sendMoneyWB(requestFrom: String(FROM),
+                                                 requestTo: String(TO),
+                                                 amount: "\((contact2 as AnyObject)["amount"]! ?? "")",
+                                                 requestId: REQUESTID)
+                                 
+                                
                             }))
                             alert.addAction(UIAlertAction(title: "Decline",
                                                           style: UIAlertAction.Style.destructive,

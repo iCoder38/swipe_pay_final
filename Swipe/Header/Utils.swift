@@ -110,3 +110,57 @@ class Utils: NSObject {
     }
     
 }
+
+import Alamofire
+import CRNotifications
+
+func callAPI(
+    url: String,
+    params: [String: Any],
+    completion: @escaping (_ success: Bool, _ response: NSDictionary?) -> Void
+) {
+    
+    
+    Alamofire.request(url, method: .post, parameters: params).responseJSON { response in
+        
+        switch response.result {
+            
+        case .success(let value):
+            let json = value as! NSDictionary
+            print("API Response:", json)
+            
+            let status = json["status"] as? String ?? "error"
+            let msg = json["msg"] as? String ?? "Something went wrong"
+            
+            if status == "success" {
+                
+                completion(true, json)
+            } else {
+                CRNotifications.showNotification(
+                    type: CRNotifications.error,
+                    title: "Error!",
+                    message: msg,
+                    dismissDelay: 1.5,
+                    completion: {}
+                )
+                ERProgressHud.sharedInstance.hide()
+                completion(false, json)
+            }
+            
+        case .failure(let error):
+            print("API Error:", error.localizedDescription)
+            ERProgressHud.sharedInstance.hide()
+            
+            let alert = UIAlertController(
+                title: nil,
+                message: SERVER_ISSUE_MESSAGE_ONE + "\n" + SERVER_ISSUE_MESSAGE_TWO,
+                preferredStyle: .actionSheet
+            )
+            
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+            UIApplication.shared.keyWindow?.rootViewController?.present(alert, animated: true)
+            
+            completion(false, nil)
+        }
+    }
+}

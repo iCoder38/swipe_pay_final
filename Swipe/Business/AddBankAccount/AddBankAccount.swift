@@ -207,7 +207,6 @@ class AddBankAccount: UIViewController,UITextFieldDelegate {
         if userName == "loginViaPersonal" {
             // personal user
             ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Please wait...")
-            
         }
         else {
             ERProgressHud.sharedInstance.showDarkBackgroundView(withTitle: "Please wait...")
@@ -220,14 +219,14 @@ class AddBankAccount: UIViewController,UITextFieldDelegate {
         /*
          [action] => banklist
          */
+        
         parameters = [
             "action" : "banklist"
         ]
         
         print("parameters-------\(String(describing: parameters))")
         
-        Alamofire.request(urlString, method: .post, parameters: parameters as? Parameters).responseJSON
-        {
+        Alamofire.request(urlString, method: .post, parameters: parameters as? Parameters).responseJSON {
             response in
             
             switch(response.result) {
@@ -243,23 +242,13 @@ class AddBankAccount: UIViewController,UITextFieldDelegate {
                     var strSuccessAlert : String!
                     strSuccessAlert = JSON["msg"]as Any as? String
                     
-                    if strSuccess == "success" //true
-                    {
-                        
+                    if strSuccess == "success" {
                         var ar : NSArray!
                         ar = (JSON["data"] as! Array<Any>) as NSArray
                         self.arrSelectBank = (ar as! Array<Any>)
-                        
-                        //self.arrListOfAllCards = self.arrListOfSavedCards
-                        
-                        
-                        
-                        
                         ERProgressHud.sharedInstance.hide()
-                        
                     }
-                    else
-                    {
+                    else {
                         // self.indicator.stopAnimating()
                         // self.enableService()
                         CRNotifications.showNotification(type: CRNotifications.error, title: "Error!", message:strSuccessAlert, dismissDelay: 1.5, completion:{})

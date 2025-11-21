@@ -4733,7 +4733,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="BXR-H1-kPN" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="6310" y="-25"/>
+            <point key="canvasLocation" x="6197" y="-139"/>
         </scene>
         <!--Edit Profile-->
         <scene sceneID="IFK-B6-PoM">
@@ -9066,8 +9066,8 @@
         <image name="magnifyingglass" catalog="system" width="128" height="117"/>
         <image name="menuWhite" width="128" height="128"/>
         <image name="pLogoStartPage" width="598" height="284"/>
-        <image name="plus" width="24" height="24"/>
         <image name="plus" catalog="system" width="128" height="113"/>
+        <image name="plus" width="24" height="24"/>
         <image name="startNewBG" width="314" height="650"/>
         <image name="visa" width="128" height="128"/>
         <image name="vpay" width="300" height="300"/>
