@@ -290,21 +290,9 @@ extension AllTransaction: UITableViewDataSource
         let item = arr_list_of_all_transactions[indexPath.row] as? [String:Any]
         print(item as Any)
         
-        // account number
         cell.lblAccountNumber.text = (item!["created"] as! String)
         
         cell.lblMyFirstLetterIs.isHidden = true
-        
-        // print(item?["amount"] as! NSNumber)
-        // let temp:NSNumber = item?["amount"] as! NSNumber
-        // let tempString = temp.stringValue
-        
-        
-        // account number
-       // let livingArea = item?["amount"] as? Int ?? 0 // start
-       // if livingArea == 0 {
-           // let stringValue = String(livingArea)
-           
         
         if (item!["type"] as! String) == "ADD" {
             cell.lblAmount.text = "+ $ "+((item?["amount"] as? String)!)

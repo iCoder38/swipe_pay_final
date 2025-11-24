@@ -1106,7 +1106,7 @@ class SendMoneyPersonal: UIViewController,MFMessageComposeViewControllerDelegate
             
             let y : Double = person["wallet"] as! Double
             let foo = y.rounded(digits: 2)
-            self.lblTotalAmountInWallet.text = "$ "+"\(foo)" 
+            self.lblTotalAmountInWallet.text = "$ "+"\(foo)"
             
             parameters = [
                 "action"         : "paymentrequestlist",

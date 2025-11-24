@@ -225,28 +225,18 @@ class TransactionDetails: UIViewController {
                             let strAmou:String = (self.dictServerValue?["amount"] as? String)!
                             self.lblBusinessUserName.text = "$ "+strAmou
                             
-                            /*
-                             let livingArea = self.dictServerValue?["amount"] as? Int ?? 0
-                             if livingArea == 0 {
-                             let stringValue = String(livingArea)
-                             self.lblBusinessUserName.text = "$ "+stringValue
-                             }
-                             else {
+                            
+                            
+                            if (self.dictServerValue!["bankName"] as! String) == "" {
+                                self.btnCall.setTitle("Wallet [CARD]", for: .normal)
+                                self.btnMail.setTitle((self.dictServerValue["receiverName"] as! String), for: .normal)
+                            } else{
+                                self.btnCall.setTitle("Wallet [BANK]", for: .normal)
+                                self.btnMail.setTitle((self.dictServerValue["bankName"] as! String), for: .normal)
+                            }
+                            
                              
-                             let stringValue = String(livingArea)
-                             self.lblBusinessUserName.text = "$ "+stringValue
-                             }
-                             */
-                            // business user name
-                            // self.lblBusinessUserName.text = (self.dictServerValue["senderName"] as! String)
                             
-                            // business phone
-                            // self.btnCall.setTitle((self.dictServerValue["senderContactNumber"] as! String), for: .normal)
-                            
-                            self.btnCall.setTitle("Paid to", for: .normal)
-                            
-                            // business email
-                            self.btnMail.setTitle((self.dictServerValue["receiverName"] as! String), for: .normal)
                             
                             self.lblNavigationTitle.text = "Transaction Details"
                         }
@@ -380,7 +370,14 @@ extension TransactionDetails: UITableViewDataSource
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
-        if (dictServerValue!["type"] as! String) == "CASHOUT" {return 3}else{return 4}
+        if (dictServerValue!["type"] as! String) == "CASHOUT" {
+            return 3
+        } else if (dictServerValue!["type"] as! String) == "ADD" {
+            return 2
+        }
+        else{
+            return 4
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
@@ -420,26 +417,22 @@ extension TransactionDetails: UITableViewDataSource
             if indexPath.row == 0 {
                 cell.lblHeader.text = "TRANSACTION ID"
                 
-                
-                
-                let livingArea = dictServerValue?["transactionsId"] as? Int ?? 0
-                if livingArea == 0 {
-                    let stringValue = String(livingArea)
-                    cell.lblDynamicText.text = stringValue
-                }
-                else
-                {
-                    let stringValue = String(livingArea)
-                    cell.lblDynamicText.text = stringValue
-                    // cell.lblDynamicText.text = (dictServerValue!["transactionsId"] as! String)
-                }
-                
-                
-                
+                cell.lblDynamicText.text = "\(self.dictServerValue?["transactionsId"]! ?? "0")"
             }
             if indexPath.row == 1 {
-                cell.lblHeader.text = (dictServerValue!["senderName"] as! String)
-                cell.lblDynamicText.text = (dictServerValue!["senderEmail"] as! String)
+                if (dictServerValue!["bankName"] as! String) == "" {
+                    cell.lblHeader.text = "CARD NUMBER"
+                    
+                    let cardNumber = (dictServerValue!["cardNumber"] as! String)
+                    let last4 = cardNumber.suffix(4)
+                    let masked = String(repeating: "* ", count: cardNumber.count - 4) + last4
+                    cell.lblDynamicText.text = masked
+                    
+                } else{
+                    cell.lblHeader.text = "BANK NAME"
+                    cell.lblDynamicText.text = (dictServerValue!["cardNumber"] as! String)
+                }
+                
             }
             if indexPath.row == 2 {
                 cell.lblHeader.text = "CONTACT NUMBER"

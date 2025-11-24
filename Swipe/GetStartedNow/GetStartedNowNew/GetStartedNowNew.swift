@@ -101,6 +101,9 @@ class GetStartedNowNew: UIViewController,UITextFieldDelegate {
                 
                 if (person["role"] as! String) == "Member" {
                     cell.txtEmail.text = (person["email"] as! String)
+                    
+                    cell.txtPassword.text = "123456"
+                    
                 }
                 else if (person["role"] as! String) == "User" {
                     cell.txtEmail.text = (person["email"] as! String)
