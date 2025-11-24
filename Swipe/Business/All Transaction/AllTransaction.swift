@@ -154,8 +154,7 @@ class AllTransaction: UIViewController {
                
                var parameters:Dictionary<AnyHashable, Any>!
            
-        if let person = UserDefaults.standard.value(forKey: "keyLoginFullData") as? [String:Any]
-        {
+        if let person = UserDefaults.standard.value(forKey: "keyLoginFullData") as? [String:Any] {
             let x : Int = (person["userId"] as! Int)
             let myString = String(x)
             
@@ -310,11 +309,23 @@ extension AllTransaction: UITableViewDataSource
             
             
         } else if (item!["type"] as! String) == "SEND" {
-            cell.lblAmount.text = "- $ "+((item?["amount"] as? String)!)
-            cell.lblAmount.textColor = .systemRed
             
-            // bank name
-            cell.lblBankName.text = (item!["receiverName"] as! String)
+            if let person = UserDefaults.standard.value(forKey: "keyLoginFullData") as? [String:Any] {
+                let x : Int = (person["userId"] as! Int)
+                let myString = String(x)
+                
+                if ("\(item!["senderId"]!)" == String(myString)) {
+                    cell.lblAmount.text = "- $ "+((item?["amount"] as? String)!)
+                    cell.lblAmount.textColor = .systemRed
+                    cell.lblBankName.text = (item!["receiverName"] as! String)
+                } else {
+                    cell.lblAmount.text = "+ $ "+((item?["amount"] as? String)!)
+                    cell.lblAmount.textColor = .systemGreen
+                    cell.lblBankName.text = (item!["senderName"] as! String)
+                }
+                
+            }
+ 
             
             // image
              cell.imgProfilePicture.sd_setImage(with: URL(string: (item!["receiverImage"] as! String)), placeholderImage: UIImage(named: "avatar"))

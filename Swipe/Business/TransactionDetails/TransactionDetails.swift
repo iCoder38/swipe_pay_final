@@ -264,10 +264,24 @@ class TransactionDetails: UIViewController {
                                 
                             }
                             
-                            self.btnCall.setTitle("Paid to", for: .normal)
+                            if let person = UserDefaults.standard.value(forKey: "keyLoginFullData") as? [String:Any] {
+                                let x : Int = (person["userId"] as! Int)
+                                let myString = String(x)
+                                
+                                if ("\(self.dictServerValue!["senderId"]!)" != String(myString)) {
+                                    self.btnCall.setTitle("Received by", for: .normal)
+                                    self.btnMail.setTitle((self.dictServerValue["senderName"] as! String), for: .normal)
+                                } else {
+                                    self.btnCall.setTitle("Paid to", for: .normal)
+                                    self.btnMail.setTitle((self.dictServerValue["receiverName"] as! String), for: .normal)
+                                }
+                                
+                            }
                             
-                            // business email
-                            self.btnMail.setTitle((self.dictServerValue["receiverName"] as! String), for: .normal)
+                            
+                            
+                             
+                            
                             
                             self.lblNavigationTitle.text = "Transaction Details"
                         }
@@ -374,6 +388,8 @@ extension TransactionDetails: UITableViewDataSource
             return 3
         } else if (dictServerValue!["type"] as! String) == "ADD" {
             return 2
+        } else if (dictServerValue!["type"] as! String) == "SEND" {
+            return 3
         }
         else{
             return 4
@@ -429,8 +445,12 @@ extension TransactionDetails: UITableViewDataSource
                     cell.lblDynamicText.text = masked
                     
                 } else{
-                    cell.lblHeader.text = "BANK NAME"
-                    cell.lblDynamicText.text = (dictServerValue!["cardNumber"] as! String)
+                    cell.lblHeader.text = "ACCOUNT NUMBER"
+                    
+                    let cardNumber = (dictServerValue!["cardNumber"] as! String)
+                    let last4 = cardNumber.suffix(4)
+                    let masked = String(repeating: "* ", count: cardNumber.count - 4) + last4
+                    cell.lblDynamicText.text = masked
                 }
                 
             }
@@ -446,18 +466,42 @@ extension TransactionDetails: UITableViewDataSource
             
             self.lblPaymentWillReflect.isHidden = false
             
+            
+            
             if indexPath.row == 0 {
                 cell.lblHeader.text = "TRANSACTION ID"
                 cell.lblDynamicText.text = (dictServerValue!["transactionsId"] as! String)
                 
             }
             if indexPath.row == 1 {
-                cell.lblHeader.text = (dictServerValue!["receiverName"] as! String)
-                cell.lblDynamicText.text = (dictServerValue!["receiverEmail"] as! String)
+                if let person = UserDefaults.standard.value(forKey: "keyLoginFullData") as? [String:Any] {
+                    let x : Int = (person["userId"] as! Int)
+                    let myString = String(x)
+                    
+                    if ("\(self.dictServerValue!["senderId"]!)" != String(myString)) {
+                        cell.lblHeader.text = "To: \((dictServerValue!["senderName"] as! String))"
+                        cell.lblDynamicText.text = (dictServerValue!["senderEmail"] as! String)
+                    } else {
+                        cell.lblHeader.text = (dictServerValue!["receiverName"] as! String)
+                        cell.lblDynamicText.text = (dictServerValue!["receiverEmail"] as! String)
+                    }
+                    
+                }
+                
             }
             if indexPath.row == 2 {
                 cell.lblHeader.text = "CONTACT NUMBER"
-                cell.lblDynamicText.text = (dictServerValue!["receiverContactNumber"] as! String)
+                if let person = UserDefaults.standard.value(forKey: "keyLoginFullData") as? [String:Any] {
+                    let x : Int = (person["userId"] as! Int)
+                    let myString = String(x)
+                    
+                    if ("\(self.dictServerValue!["senderId"]!)" != String(myString)) {                         
+                        cell.lblDynamicText.text = (dictServerValue!["senderContactNumber"] as! String)
+                    } else {
+                        cell.lblDynamicText.text = (dictServerValue!["receiverContactNumber"] as! String)
+                    }
+                    
+                }
             }
             if indexPath.row == 3 {
                 cell.lblHeader.text = "FROM BANK"
