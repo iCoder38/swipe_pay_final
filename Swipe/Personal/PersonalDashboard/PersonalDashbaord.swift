@@ -51,7 +51,7 @@ class PersonalDashbaord: UIViewController,MFMailComposeViewControllerDelegate, U
     
     @IBOutlet weak var lblAmountLeftInAccoun:UILabel! {
         didSet {
-            // lblAmountLeftInAccoun.text = "500$"
+            lblAmountLeftInAccoun.text = "..."
             lblAmountLeftInAccoun.textColor = .white
         }
     }

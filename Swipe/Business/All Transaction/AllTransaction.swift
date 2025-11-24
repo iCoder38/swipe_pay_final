@@ -334,14 +334,11 @@ extension AllTransaction: UITableViewDataSource
             
         } else if (item!["type"] as! String) == "CardProcess" {
             
-            cell.lblAmount.text = "+ $ "+((item?["amount"] as? String)!)
-            cell.lblAmount.textColor = .systemTeal
+            cell.lblAmount.text = "- $ "+((item?["amount"] as? String)!)
+            cell.lblAmount.textColor = .red
             
-            // bank name
             cell.lblBankName.text = ((item?["nameOnCard"] as? String)!)
-            // cell.lblBankName.textColor = .systemTeal
             
-            // image
              cell.imgProfilePicture.sd_setImage(with: URL(string: (item!["senderImage"] as! String)), placeholderImage: UIImage(named: "avatar"))
             
             cell.imgProfilePicture.backgroundColor = .clear

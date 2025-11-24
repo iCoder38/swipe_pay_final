@@ -299,10 +299,11 @@ class TransactionDetails: UIViewController {
                             
                             self.btnCall.setTitle((self.dictServerValue["type"] as! String), for: .normal)
                             
-                            self.imgBusinessUserProfileImage.sd_setImage(with: URL(string: (self.dictServerValue["receiverImage"] as! String)), placeholderImage: UIImage(named: "plainBack")) // my profile image
+                            self.imgBusinessUserProfileImage.sd_setImage(with: URL(string: (self.dictServerValue["receiverImage"] as! String)), placeholderImage: UIImage(named: "plainBack"))
                             
                             let strAmou:String = (self.dictServerValue?["amount"] as? String)!
-                            self.lblBusinessUserName.text = "+ $ "+strAmou
+                            self.lblBusinessUserName.text = "- $ "+strAmou
+                            
                             
                             // business email
                             self.btnMail.setTitle((self.dictServerValue["receiverName"] as! String), for: .normal)
@@ -375,15 +376,13 @@ class TransactionDetails: UIViewController {
 }
 
 
-extension TransactionDetails: UITableViewDataSource
-{
-    func numberOfSections(in tableView: UITableView) -> Int
-    {
+extension TransactionDetails: UITableViewDataSource {
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
-    {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if (dictServerValue!["type"] as! String) == "CASHOUT" {
             return 3
         } else if (dictServerValue!["type"] as! String) == "ADD" {
@@ -396,8 +395,8 @@ extension TransactionDetails: UITableViewDataSource
         }
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
-    {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
         let cell:TransactionTableCell = tableView.dequeueReusableCell(withIdentifier: cellReuseIdentifier) as! TransactionTableCell
         
         cell.backgroundColor = .white

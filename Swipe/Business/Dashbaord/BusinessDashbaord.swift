@@ -107,8 +107,49 @@ class BusinessDashbaord: UIViewController,MFMailComposeViewControllerDelegate {
             navigationBar.backgroundColor = NAVIGATION_BUSINESS_BACKGROUND_COLOR
             self.view.backgroundColor = BUTTON_BACKGROUND_COLOR_BLUE
         }
-        
+//        self.lblTotalAmountInWallet.text = "..."
+        self.profileWB()
     }
+    
+    func profileWB() {
+        guard let person = UserDefaults.standard.value(forKey: "keyLoginFullData") as? [String:Any],
+              let userId = person["userId"] as? Int else { return }
+        
+        let params: [String: Any] = [
+            "action"    : "profile",
+            "userId"    : "\(userId)",
+            
+        ]
+        
+        print(params as Any)
+        
+        callAPI(url: BASE_URL_SWIIPE, params: params) { success, response in
+            print(response as Any)
+            
+            if success {
+                if let json = response {
+                    
+                    // 👇 exactly yehi save karna hai
+                    if let dict = json["data"] as? [AnyHashable : Any] {
+                        let defaults = UserDefaults.standard
+                        defaults.setValue(dict, forKey: "keyLoginFullData")
+                        print("✅ Saved user data:", dict)
+                        
+                        if let person = UserDefaults.standard.value(forKey: "keyLoginFullData") as? [String:Any] {
+                            let x : Double = person["wallet"] as! Double
+                            let foo = x.rounded(digits: 2)
+                            self.lblTotalAmountInWallet.text = "$ "+"\(foo)"
+                        }
+                    } else {
+                        print("❌ 'data' key not found in JSON")
+                    }
+                    
+                }
+                
+            }
+        }
+    }
+    
     
     // MARK:- GER LOGIN USER FULL DATA HERE
     @objc func gerServerFullData() {
